@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Semester Project</title>
+        <link rel="stylesheet" href="styles/styles.css">
+        <script src="app.js" defer></script>
+    </head>
+    <body>
+        {% include 'includes/navbar.html' %}
+            
+            <h1>Network Dashboard</h1>
+        </header>
+        <nav>
+            <menu>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="runCommand.html">Run Command</a></li>
+                <li><a href="networkInfo.html">Network Info</a></li>
+                <li><a href="settings.html">Settings</a></li>
+                <li><a href="about.html">About</a></li>
+            </menu>
+        </nav>
+        <main>
+            <h1>Run Command</h1>
+    
+            <input id ="host" placeholder="IP address" type="text"/>
+            <input id="command" placeholder="command" type="text"/>
+            <button id="runCommand">Run Command</button><button id="testAPI">Test API</button>
+            <section id="content">
+                <h2>Welcome to the Semester Project</h2>
+                <p>This is a simple web application.</p>
+            </section>
+            <pre id="output"></pre>
+        </main>
+        <footer>
+            <p>&copy; 2023 Semester Project</p>
+            
+        </footer>
+    </body>
