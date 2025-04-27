@@ -1,4 +1,17 @@
-<ul id="login_list">
-    <li id="username_list_item"><label for="username">Username:</label><input id="username" placeholder="username" type="text"/></li>
-    <li id="password_list_item"><label for="password">Password:</label><input id="password" placeholder="password" type="password"/></li>
-</ul>
+<link rel="stylesheet" href="/frontend/static/css/navbar.css" defer>
+<!--     <script src="/frontend/static/js/navbar.js" defer></script> -->
+<nav id="navbar">
+    
+    {% include 'includes/login.html' %}
+    <div class="logo">
+        <!--<img src="/frontend/static/images/logo.png" alt="Logo">-->
+
+        <h1>Network Dashboard</h1>
+    </div>
+    <menu id="navbar_menu">
+        <a href="{{ url_for('home.home') }}" title="Go to Home Page">Home</a>
+        <a href="{{ url_for('commands.command_page') }}" title="Run Command">Run Command</a>
+        <a href="{{ url_for('quick_commands.quick_commands_page') }}" title="Quick Commands">Quick Commands</a>
+        <a href="{{ url_for('settings.settings') }}">Settings</a>
+    </menu>
+</nav>

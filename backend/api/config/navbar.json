@@ -1,0 +1,9 @@
+{
+    "menu": [
+        {"label": "Dashboard", "icon": "dashboard", "path": "/dashboard"},
+        {"label": "Home", "icon": "home", "path": "/home"},
+        {"label": "About", "icon": "info", "path": "/about"},
+        {"label": "Contact", "icon": "phone", "path": "/contact"},
+        {"label": "Settings", "icon": "settings", "path": "/settings"}
+    ]
+}

@@ -57,7 +57,7 @@ function runCommand() {
   const host = document.getElementById('host').value;
   const command = document.getElementById('command').value;
 
-  fetch('http://127.0.0.1:5000/run_command', {
+  fetch('http://127.0.0.1:5000/send_command', {
     method: 'POST',
     headers: addAuthTokenToRequest({ 'Content-Type': 'application/json' }),
     body: JSON.stringify({ host, command })
@@ -79,7 +79,7 @@ function runCommand() {
     const password = document.getElementById('password').value;
     const command = document.getElementById('command').value;
     
-    fetch('http://127.0.0.1:5000/run_command', {
+    fetch('http://127.0.0.1:5000/send_command', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ host, username, password, command })
