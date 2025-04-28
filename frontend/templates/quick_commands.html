@@ -1,21 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Semester Project</title>
-        <link rel="stylesheet" href="../static/css/styles.css">
-        <script src="../static/js/app.js" defer></script>
-    </head>
-    <body>
-        </header>
-        {% include 'includes/navbar.html' %}
-        
-        <main>
-
-        </main>
-        <footer>
-            <p>&copy; 2023 Semester Project</p>
-            
-        </footer>
-    </body>
+{% extends 'DefaultPage.html' %}
+{% block title %} Home {% endblock %}
+{% block content %}
+<section id="content">
+    <h2>Quick Commands</h2>
+    <p>This is a simple web application.</p>
+</section>
+<pre id="output"></pre>        
+{% endblock %}

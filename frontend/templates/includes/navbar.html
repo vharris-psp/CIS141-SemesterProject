@@ -1,16 +1,15 @@
-<link rel="stylesheet" href="/frontend/static/css/navbar.css" defer>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}" defer>
 <!--     <script src="/frontend/static/js/navbar.js" defer></script> -->
 <nav id="navbar">
     
-    {% include 'includes/login.html' %}
     <div class="logo">
         <!--<img src="/frontend/static/images/logo.png" alt="Logo">-->
 
         <h1>Network Dashboard</h1>
     </div>
     <menu id="navbar_menu">
-        <a href="{{ url_for('home.home') }}" title="Go to Home Page">Home</a>
-        <a href="{{ url_for('commands.command_page') }}" title="Run Command">Run Command</a>
+        <a href="{{ url_for('home.index') }}" title="Go to Home Page">Home</a>
+        <a href="{{ url_for('switch_commands.command_page') }}" title="Run Command">Run Command</a>
         <a href="{{ url_for('quick_commands.quick_commands_page') }}" title="Quick Commands">Quick Commands</a>
         <a href="{{ url_for('settings.settings') }}">Settings</a>
     </menu>

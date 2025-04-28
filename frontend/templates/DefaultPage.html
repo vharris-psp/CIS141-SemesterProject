@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1>Network Dashboard - {{ label }} </h1> 
+    </header>
+    <nav id="navbar">
+        {% include 'includes/navbar.html' %}
+    </nav>
+    <div>
+        {% include 'includes/switch_list.html' %}
+        {% for button in header_buttons %}
+            {{ button.html | safe }}
+        {% endfor %}
+    </div>
+    <main>
+        {{ content.html }}
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        {% for button in footer_buttons %}
+            {{ button.html | safe }}
+        {% endfor %}
+        
+        {% include 'includes/footer.html' %}
+    </footer>
+</body>
+
+</html>

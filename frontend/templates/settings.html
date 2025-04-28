@@ -1,21 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Semester Project</title>
-        <link rel="stylesheet" href="../static/css/styles.css">
-        <script src="../static/js/app.js" defer></script>
-    </head>
-    <body>
-        </header>
-        {% include 'includes/navbar.html' %}
-        
-        <main>
-
-        </main>
-        <footer>
-            <p>&copy; 2023 Semester Project</p>
-            
-        </footer>
-    </body>
+{% extends 'DefaultPage.html' %}
+{% block title %} Home {% endblock %}
+{% block content %}
+<section id="content">
+    <h2>Settings</h2>
+</section>
+{% include 'includes/add_device.html' %}
+<pre id="output"></pre>
+{% endblock %}
