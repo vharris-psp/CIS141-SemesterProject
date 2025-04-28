@@ -2,23 +2,33 @@
 <html lang="en">
 <head>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" defer>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/widgets.css') }}" defer>
 </head>
 
 <body>
     <header>
-        <h1>Network Dashboard - {{ label }} </h1> 
+        <h1>Network Dashboard</h1>
+        <nav id="navbar">
+            {% include 'includes/navbar.html' %}
+        </nav>
     </header>
-    <nav id="navbar">
-        {% include 'includes/navbar.html' %}
-    </nav>
-    <div>
-        {% include 'includes/switch_list.html' %}
-        {% for button in header_buttons %}
-            {{ button.html | safe }}
-        {% endfor %}
-    </div>
+    
     <main>
-        {{ content.html }}
+        {% if content is iterable and not content|string %}
+            {% for item in content %}
+                {{ item.html | safe }}
+            {% endfor %}
+        {% else %}
+            {{ content.html | safe }}
+        {% endif %}
+        
+        {% if buttons is iterable %}
+            {% for button in buttons %}
+                {{ button.html | safe }}
+            {% endfor %}
+        {% endif %}
+        
         {% block content %}{% endblock %}
     </main>
     <footer>

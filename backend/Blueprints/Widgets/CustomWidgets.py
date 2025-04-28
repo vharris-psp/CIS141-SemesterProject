@@ -3,7 +3,9 @@
 # from textual import on, work
 # from textual.keys import Keys
 # from textual.containers import HorizontalGroup, VerticalGroup, Vertical, Grid
-from backend.Blueprints.Widgets.HTMLWidgets import VerticalGroup, HorizontalGroup
+from backend.Blueprints.Widgets import Input, Static
+from backend.Blueprints.Widgets.Container import VerticalGroup, HorizontalGroup, Collapsible
+from backend.api.helpers.ConfigHelper import ConfigHelper
 # from textual.widgets import Switch, Static, Button, Collapsible, Checkbox, Label, Input, Pretty, TextArea, Select
 # from textual.app import ComposeResult
 # from textual.suggester import SuggestFromList
@@ -136,13 +138,110 @@ from backend.Blueprints.Widgets.HTMLWidgets import VerticalGroup, HorizontalGrou
 #         self.mount(self.toggle)
 #         self.mount(self.connection_indicator)
 #         return super()._on_mount(event)
-# class ConnectionSelector(Collapsible):
 
+
+
+class ConfigInput(HorizontalGroup):
+    _default_css_class = "config-input"
+    def __init__(self, setting: str, value: str):
         
-#     def __init__(self, *children, title):    
-#         super().__init__(*children, collapsed_symbol='>>>', expanded_symbol='V', title=title)
-#         self.styles.background = Color(40, 40, 40)
+        self.children = [Static.Label(setting), Input.Input(id=f'{setting}-input', value=value)]
+
+        super().__init__(id=f'{setting}config-input')
         
+        
+        
+    
+    def generate_html(self):
+        # Generate HTML for a config input widget
+        html = f'<div id="{self.id}" class="{self._default_css_class}">'
+        if self.children:
+            for child in self.children:
+                html += child.html
+        html += '</div>'
+        return html
+class ConfigContainer(VerticalGroup):
+    _default_css_class = "config-container"
+    def __init__(self, setting: str, data: dict):
+        self.data = data
+   
+        super().__init__(id=f'{setting}-config-container')
+   
+    def generate_html(self):
+        # Generate HTML for a config container widget
+        html = f'<div id="{self.id}" class="{self._default_css_class}">'
+        html += f'<h3>{self.id}</h3>'
+        if self.data:
+            for child in self.children:
+                html += child.html
+        html += '</div>'
+        return html
+class DeviceConfigContainer(ConfigContainer):
+    def __init__(self, device: str, data: dict):
+        self.device = device
+        self.data = data
+        self.children = [ConfigInput(setting=setting, value=value) for setting, value in data.items()]
+        super().__init__(setting=device, data=data)
+        
+        
+    def generate_html(self):
+        # Generate HTML for a config container widget
+        html = f'<div id="{self.id}" class="{self._default_css_class}">'
+        html += f'<h3>{self.device}</h3>'
+        if self.data:
+            for child in self.data:
+                html += child.html
+        html += '</div>'
+        return html        
+
+class ConfigCollapsible(Collapsible):
+    _default_css_class = "config-collapsible"
+    def __init__(self, id: str, children: list, header: str, collapsed_symbol='>', expanded_symbol='V'):
+        self.header = header
+        super().__init__(id=id, children=children, collapsed_symbol=collapsed_symbol, expanded_symbol=expanded_symbol, header=header)
+
+class SettingsViewer(VerticalGroup):
+    _default_css_class = "settings-viewer"
+    
+
+    def __init__(self, id: str):
+        children = SettingsViewer.get_elements_from_config()
+        super().__init__(id=id, children=children)
+    
+
+    def generate_html(self):
+        # Generate HTML for a settings viewer widget
+        html = f'<div id="{self.id}" class="{self._default_css_class}">'
+        html += f'<h3>{self.id}</h3>'
+        if self.children:
+            for child in self.children:
+                html += child.html
+        html += '</div>'
+        return html
+    @staticmethod
+    def get_elements_from_config():
+        devices = ConfigHelper().get_all_device_configs()
+        children_elements = []
+        # Iterate through each type of device
+        for device_type in devices:
+            # Declare the types, and a list to hold the config elements
+            device_type = device_type
+            device_config_elements = [] 
+            for device_name in devices[device_type]:
+                device_config_elements.append(DeviceConfigContainer(device=device_name, data=devices[device_type][device_name]))
+            # Store the Config Elements (One Collapsible for each device type) in the children_elements list
+            children_elements.append(ConfigCollapsible(id=device_type, children=device_config_elements, header=device_type))
+        # Return the list of collapsible elements
+        return children_elements
+    
+            
+        
+    
+class ConnectionSelector(Collapsible):
+    _default_css_class = "connection-selector"
+    
+    def __init__(self, id, children: list, collapsed_symbol= '>', expanded_symbol='V', title = 'Connection Selector'):    
+        super().__init__(id, children, collapsed_symbol='>>>', expanded_symbol='V', header=title)
         
         
 #     def compose(self) -> ComposeResult:
@@ -360,8 +459,9 @@ from backend.Blueprints.Widgets.HTMLWidgets import VerticalGroup, HorizontalGrou
 #     def __init__(self):
 #         super().__init__()
 class CommandOutputWidget(VerticalGroup):
-     def __init__(self):
-         super().__init__()
+     _default_css_class = "command-output-widget"
+     def __init__(self, id: str, children: list = None):
+         super().__init__(id, children)
          self.boxes = {}
 #     def _on_mount(self):
 #         self.mount(Label('Outputs:'))       

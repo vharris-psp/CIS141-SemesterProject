@@ -1,0 +1,79 @@
+.widget, .collapsible, .container, .vertical-group, .horizontal-group {
+    background-color: red;
+    border: 1px solid red;
+    width: 100px; /* Example width */
+    height: 100px; /* Example height */
+    display: inline-block; /* Ensures they appear as boxes */
+    position: relative; /* Allows positioning of the text */
+}
+
+.widget::after, .collapsible::after, .container::after, .vertical-group::after, .horizontal-group::after {
+    content: attr(class); /* Displays the class name */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white; /* Text color */
+    font-size: 12px; /* Adjust font size as needed */
+    text-align: center;
+    pointer-events: none; /* Ensures the text doesn't interfere with interactions */
+}
+
+
+.connection-selector {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px;
+    width: 200px; /* Example width */
+    height: 100px; /* Example height */
+    display: inline-block; /* Ensures they appear as boxes */
+    vertical-align: top; /* Aligns them to the top */
+    box-sizing: border-box; /* Ensures padding and border are included in the width/height */
+}
+
+.command-output-widget {
+    content: attr(class); /* Displays the class name */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: black; /* Text color */  
+}
+.settings-viewer {
+    background-color: #e6e6e6; /* Slightly lighter background for distinction */
+    border: 1px solid #bbb; /* Softer border color */
+    padding: 15px; /* Increased padding for better spacing */
+    margin: 10px;
+    display: grid; /* Use CSS Grid for layout */
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Flexible grid with responsive columns */
+    gap: 10px; /* Spacing between grid items */
+    box-sizing: border-box; /* Ensures padding and border are included in the width/height */
+}
+/* Add styles or remove the empty ruleset */
+.config-container {
+    display: flex; /* Example style */
+    flex-direction: column; /* Example style */
+    gap: 10px; /* Example style */
+}
+.config-item {
+    background-color: #f9f9f9; /* Light background for config items */
+    border: 1px solid #ddd; /* Subtle border for separation */
+    padding: 10px;
+    margin: 0; /* Remove margin since grid handles spacing */
+    box-sizing: border-box; /* Ensures padding and border are included in the width/height */
+}
+.config-collapsible {
+    background-color: #fff; /* White background for collapsible items */
+    border: 1px solid #ccc; /* Standard border */
+    padding: 10px;
+    margin: 0; /* Remove margin since grid handles spacing */
+    box-sizing: border-box; /* Ensures padding and border are included in the width/height */
+}
+.config-input {
+    background-color: #fff; /* White background for input items */
+    border: 1px solid #ccc; /* Standard border */
+    padding: 10px;
+    margin: 0; /* Remove margin since grid handles spacing */
+    box-sizing: border-box; /* Ensures padding and border are included in the width/height */
+}

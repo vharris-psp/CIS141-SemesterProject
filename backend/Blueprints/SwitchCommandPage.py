@@ -37,12 +37,6 @@ class SwitchCommandScreen(DefaultSwitchScreen):
     
 ## LEGACY CODE
 
-
-
-
-
-
-    
     def __init__(self, label):
         super().__init__(label="Command Screen")
         #self.label = label
