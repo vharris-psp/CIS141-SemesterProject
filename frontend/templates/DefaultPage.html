@@ -17,7 +17,7 @@
     <main>
         {% if content is iterable and not content|string %}
             {% for item in content %}
-                {{ item.html | safe }}
+                {{ item.generate_html() | safe }}
             {% endfor %}
         {% else %}
             {{ content.html | safe }}

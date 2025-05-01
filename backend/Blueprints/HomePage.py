@@ -8,14 +8,17 @@ class HomePage(DefaultPage):
     footer_buttons = []
     content = None  # Placeholder for content
 
-    blueprint = Blueprint('home', __name__, template_folder='../../frontend/templates', static_folder='../../frontend/static')
-    @blueprint.route('/')
-    def index():
-        return render_template('index.html', header_buttons=HomePage.header_buttons, footer_buttons=HomePage.footer_buttons, content=HomePage.content)
+    # Removed now that Page inherits from blueprint
+    #blueprint = Blueprint('home', __name__, template_folder='../../frontend/templates', static_folder='../../frontend/static')
+    def __init__(self):
+        super().__init__(name='home')
+        @self.route('/')
+        def index():
+            return render_template('index.html', header_buttons=HomePage.header_buttons, footer_buttons=HomePage.footer_buttons, content=HomePage.content)
 
-    @blueprint.route('/home')
-    def home():
-        return render_template('index.html', header_buttons=HomePage.header_buttons, footer_buttons=HomePage.footer_buttons, content=HomePage.content)
+        @self.route('/home')
+        def home():
+            return render_template('index.html', header_buttons=HomePage.header_buttons, footer_buttons=HomePage.footer_buttons, content=HomePage.content)
 
 
 def serve_static(path):

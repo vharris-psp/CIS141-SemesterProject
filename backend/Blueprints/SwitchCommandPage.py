@@ -17,30 +17,33 @@ def contains_show_run(string: str):
 
 
 class SwitchCommandScreen(DefaultSwitchScreen):
-    label = "Switch Command Page"
-        
-        
-        
 
-    blueprint = Blueprint('switch_commands', __name__, template_folder='../../frontend/templates', static_folder='../../frontend/static')
-    
-    @blueprint.route('/command_page')
-    def command_page():
-        return render_template('command_page.html', header_buttons=SwitchCommandScreen.header_buttons, footer_buttons=SwitchCommandScreen.footer_buttons, content=SwitchCommandScreen.content)
+        
+        
+        
+    # Deprecated, page now inherits from DefaultPage(Blueprint)
+    #blueprint = Blueprint('switch_commands', __name__, template_folder='../../frontend/templates', static_folder='../../frontend/static')
+    def __init__(self):
+        super().__init__(name='switch_commands')
+        self.outputs = {}
+        
+        
+        @self.route('/command_page')
+        def command_page():
+            return render_template('command_page.html', header_buttons=SwitchCommandScreen.header_buttons, footer_buttons=SwitchCommandScreen.footer_buttons, content=SwitchCommandScreen.content)
 
-    @blueprint.route('/run_command')
-    def run_command():
-        # Logic for running commands
-        return render_template('run_command.html')
+        @self.route('/run_command')
+        def run_command():
+            # Logic for running commands
+            return render_template('run_command.html')
 
 
     
 ## LEGACY CODE
 
-    def __init__(self, label):
-        super().__init__(label="Command Screen")
+
         #self.label = label
-        self.outputs = {}
+
         #self.input = Suggestion_Input(
         #    suggestion_type='',
         #    placeholder='interface', 

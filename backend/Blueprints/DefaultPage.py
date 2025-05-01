@@ -8,27 +8,26 @@ from flask import Flask, Blueprint
 from backend.Blueprints.Widgets.Buttons import HeaderButton, FooterButton
 from backend.Blueprints.Widgets.CustomWidgets import CommandOutputWidget
     
-class DefaultPage:
+class DefaultPage(Blueprint):
     # These now load in the base page, and can be overridden
     header_buttons = [ HeaderButton(label='Header', id='header-button-1'), HeaderButton(label='Buttons', id='header-button-2'), HeaderButton(label='Here', id='header-button-3')]
     footer_buttons = [ FooterButton(label='Footer', id='footer-button-1'), FooterButton(label='Buttons', id='footer-button-2'), FooterButton(label='Here', id='footer-button-3')]
     content: CommandOutputWidget  = None
-    blueprint = Blueprint('default_page', __name__, template_folder='../../frontend/templates', static_folder='../../frontend/static')
+    
     
 
-    def __init__(self, label):  
-        self.title = label
+    def __init__(self, name):  
+    
         self.content = None
         
         #self.quick_connects = quick_connects
         #self.connect_dropdown = connect_dropdown
         #self.header_buttons = header_buttons
         #self.footer_buttons = footer_buttons
+        super().__init__(name=name, import_name=__name__, template_folder='../../frontend/templates', static_folder='../../frontend/static')
     def get_content(self):
         return self.content
-    @blueprint.route('label')
-    def label(self):
-        return self.label
+   
 
     #quick_connects: QuickConnectButtons = None
     #connect_dropdown: ConnectionSelector = None
@@ -59,19 +58,19 @@ class DefaultPage:
     
 class DefaultSwitchScreen(DefaultPage):
     
-    def __init__(self, label):
+    def __init__(self, name):
         #quick_connects = SwitchQuickConnectButtons()
         #connect_dropdown = SwitchSelectDropdown()
         #content_viewer = Command_Output_Widget()
-        #super().__init__(label, quick_connects=quick_connects, connect_dropdown=connect_dropdown, content_viewer=content_viewer)
+        super().__init__(name=name)
         pass
 class DefaultWLCScreen(DefaultPage):
-    def __init__(self, label):
+    def __init__(self, name):
         #quick_connects = WLCQuickConnectButtons()
         #connect_dropdown = WLCConnectionDropdown()
         #content_viewer = Command_Output_Widget()
         #super().__init__(label, quick_connects=quick_connects, connect_dropdown=connect_dropdown, content_viewer=content_viewer)
-        super().__init__(label)
+        super().__init__(name=name)
         
         
         

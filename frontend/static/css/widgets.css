@@ -1,17 +1,21 @@
-.widget, .collapsible, .container, .vertical-group, .horizontal-group {
+.widget, .container,.static-widget {
     background-color: red;
-    border: 1px solid red;
-    width: 100px; /* Example width */
-    height: 100px; /* Example height */
-    display: inline-block; /* Ensures they appear as boxes */
+    
+    border: 3px solid red !important;
+    width: fit-content; /* Example width */
+    height: fit-content;
+    color: red !important;
+    min-height: 100px;
+    min-width: 100px; /* Example height */
+    display: block; /* Ensures they appear as boxes */
     position: relative; /* Allows positioning of the text */
 }
 
-.widget::after, .collapsible::after, .container::after, .vertical-group::after, .horizontal-group::after {
-    content: attr(class); /* Displays the class name */
+.widget::after, .collapsible::after .static-widget::after{
+    content: attr(class) " " attr(id); /* Displays the class name */
     position: absolute;
-    top: 50%;
-    left: 50%;
+    top: 0;
+    left: 0;
     transform: translate(-50%, -50%);
     color: white; /* Text color */
     font-size: 12px; /* Adjust font size as needed */
@@ -19,6 +23,16 @@
     pointer-events: none; /* Ensures the text doesn't interfere with interactions */
 }
 
+.vertical-group, .horizontal-group, .collapsible{
+    background-color: #f0f0f0; /* Light background for groups */
+    border: 1px solid #ccc; /* Standard border */
+    padding: 10px;
+    margin: 10px;
+    width: fit-content; /* Example width */
+    height: fit-content; /* Example height */
+    display: block; /* Ensures they appear as boxes */
+    position: relative; /* Allows positioning of the text */
+}
 
 .connection-selector {
     background-color: #f0f0f0;
@@ -33,7 +47,7 @@
 }
 
 .command-output-widget {
-    content: attr(class); /* Displays the class name */
+    /* Displays the class name and id */
     position: absolute;
     top: 50%;
     left: 50%;
@@ -45,6 +59,7 @@
     border: 1px solid #bbb; /* Softer border color */
     padding: 15px; /* Increased padding for better spacing */
     margin: 10px;
+    width: 80%;
     display: grid; /* Use CSS Grid for layout */
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Flexible grid with responsive columns */
     gap: 10px; /* Spacing between grid items */
@@ -57,7 +72,7 @@
     gap: 10px; /* Example style */
 }
 .config-item {
-    background-color: #f9f9f9; /* Light background for config items */
+    background-color: #d42828; /* Light background for config items */
     border: 1px solid #ddd; /* Subtle border for separation */
     padding: 10px;
     margin: 0; /* Remove margin since grid handles spacing */
@@ -75,5 +90,23 @@
     border: 1px solid #ccc; /* Standard border */
     padding: 10px;
     margin: 0; /* Remove margin since grid handles spacing */
+    box-sizing: border-box; /* Ensures padding and border are included in the width/height */
+}
+.static-label {
+    background-color: #fff; /* White background for static labels */
+    border: 1px solid #ccc; /* Standard border */
+    padding: 10px;
+    margin: 0; /* Remove margin since grid handles spacing */
+    box-sizing: border-box; /* Ensures padding and border are included in the width/height */
+    font-weight: bold; /* Bold text for emphasis */
+}
+.device-setting-container {
+    background-color: #f9f9f9; /* Light background for device settings */
+    border: 1px solid #ddd; /* Subtle border for separation */
+    padding: 15px; /* Increased padding for better spacing */
+    margin: 10px;
+    display: grid; /* Use CSS Grid for layout */
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Flexible grid with responsive columns */
+    gap: 10px; /* Spacing between grid items */
     box-sizing: border-box; /* Ensures padding and border are included in the width/height */
 }

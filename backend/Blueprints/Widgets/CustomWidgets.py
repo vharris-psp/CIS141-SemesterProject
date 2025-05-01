@@ -141,98 +141,43 @@ from backend.api.helpers.ConfigHelper import ConfigHelper
 
 
 
-class ConfigInput(HorizontalGroup):
-    _default_css_class = "config-input"
+class ConfigInputContainer(HorizontalGroup):
+    css_class = "config-input"
     def __init__(self, setting: str, value: str):
         
-        self.children = [Static.Label(setting), Input.Input(id=f'{setting}-input', value=value)]
+        self.children = [Static.Label(label_text=setting), Input.Input(id=f'{setting}-input', value=value)]
 
         super().__init__(id=f'{setting}config-input')
         
         
         
-    
-    def generate_html(self):
-        # Generate HTML for a config input widget
-        html = f'<div id="{self.id}" class="{self._default_css_class}">'
-        if self.children:
-            for child in self.children:
-                html += child.html
-        html += '</div>'
-        return html
 class ConfigContainer(VerticalGroup):
-    _default_css_class = "config-container"
+    css_class = "config-container"
     def __init__(self, setting: str, data: dict):
-        self.data = data
-   
+        self.data = data   
         super().__init__(id=f'{setting}-config-container')
    
-    def generate_html(self):
-        # Generate HTML for a config container widget
-        html = f'<div id="{self.id}" class="{self._default_css_class}">'
-        html += f'<h3>{self.id}</h3>'
-        if self.data:
-            for child in self.children:
-                html += child.html
-        html += '</div>'
-        return html
-class DeviceConfigContainer(ConfigContainer):
+
+class DeviceSettingContainer(ConfigContainer):
+    _description = "Device Setting Container"
+    css_class = "device-setting-container"
     def __init__(self, device: str, data: dict):
         self.device = device
         self.data = data
-        self.children = [ConfigInput(setting=setting, value=value) for setting, value in data.items()]
-        super().__init__(setting=device, data=data)
+        self.children = [ConfigInputContainer(setting=setting, value=value) for setting, value in data.items()]
+        super().__init__(setting=f'{device}', data=data)
         
         
-    def generate_html(self):
-        # Generate HTML for a config container widget
-        html = f'<div id="{self.id}" class="{self._default_css_class}">'
-        html += f'<h3>{self.device}</h3>'
-        if self.data:
-            for child in self.data:
-                html += child.html
-        html += '</div>'
-        return html        
-
+   
 class ConfigCollapsible(Collapsible):
     _default_css_class = "config-collapsible"
-    def __init__(self, id: str, children: list, header: str, collapsed_symbol='>', expanded_symbol='V'):
-        self.header = header
-        super().__init__(id=id, children=children, collapsed_symbol=collapsed_symbol, expanded_symbol=expanded_symbol, header=header)
+    def __init__(self, id: str, label_text: str, collapsed_symbol='>', expanded_symbol='V', config_elements: dict = None):
+        self.inner_html = label_text
+        self.children = [el for el in config_elements.values()]
+        super().__init__(id=id, collapsed_symbol=collapsed_symbol, expanded_symbol=expanded_symbol, label_text=label_text)
+   
 
-class SettingsViewer(VerticalGroup):
-    _default_css_class = "settings-viewer"
-    
-
-    def __init__(self, id: str):
-        children = SettingsViewer.get_elements_from_config()
-        super().__init__(id=id, children=children)
-    
-
-    def generate_html(self):
-        # Generate HTML for a settings viewer widget
-        html = f'<div id="{self.id}" class="{self._default_css_class}">'
-        html += f'<h3>{self.id}</h3>'
-        if self.children:
-            for child in self.children:
-                html += child.html
-        html += '</div>'
-        return html
-    @staticmethod
-    def get_elements_from_config():
-        devices = ConfigHelper().get_all_device_configs()
-        children_elements = []
-        # Iterate through each type of device
-        for device_type in devices:
-            # Declare the types, and a list to hold the config elements
-            device_type = device_type
-            device_config_elements = [] 
-            for device_name in devices[device_type]:
-                device_config_elements.append(DeviceConfigContainer(device=device_name, data=devices[device_type][device_name]))
-            # Store the Config Elements (One Collapsible for each device type) in the children_elements list
-            children_elements.append(ConfigCollapsible(id=device_type, children=device_config_elements, header=device_type))
-        # Return the list of collapsible elements
-        return children_elements
+        
     
             
         
@@ -241,7 +186,7 @@ class ConnectionSelector(Collapsible):
     _default_css_class = "connection-selector"
     
     def __init__(self, id, children: list, collapsed_symbol= '>', expanded_symbol='V', title = 'Connection Selector'):    
-        super().__init__(id, children, collapsed_symbol='>>>', expanded_symbol='V', header=title)
+        super().__init__(id, children, collapsed_symbol='>>>', expanded_symbol='V', label_text=title)
         
         
 #     def compose(self) -> ComposeResult:
