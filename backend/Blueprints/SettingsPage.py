@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, app
+from flask import Blueprint, jsonify, render_template, app
 from backend.Blueprints.DefaultPage import DefaultPage
 from backend.Blueprints.Widgets.Container import VerticalGroup
 from backend.Blueprints.Widgets.CustomWidgets import CommandOutputWidget, ConfigCollapsible, DeviceSettingContainer
@@ -9,52 +9,49 @@ class SettingsPageContent(VerticalGroup):
     inner_html = "Settings Viewer"
 
     def __init__(self, id: str):
-        self.children = SettingsPageContent.get_elements_from_config()         
+        self.device_config_collapsible = ConfigCollapsible(id='device_config', label_text='Device Config')
+        self.children = [self.device_config_collapsible]
         super().__init__(id=id)
 
 
-    def get_elements_from_config():
-        config_containers = []
-        # Get all device configs from the ConfigHelper
-        device_configs = ConfigHelper().get_all_device_configs()
-        # Iterate through each type of device
-
-        for device_type in device_configs:
-            # Get all device configs for this type of device
-            
-            # Create the device config container for each device
-            devices = {}      
-            for device_name in device_configs[device_type]:
-                config_container = DeviceSettingContainer(device=device_name, data=device_configs[device_type][device_name])
-                devices[device_name] = config_container
-            # Create a collapsible element for the device type
-            config_containers.append(ConfigCollapsible(id=device_type, label_text=device_type, config_elements=devices))
-
-                # Store the Config Elements (One Collapsible for each device type) in the children_elements list
-        return config_containers
-            # Return the list of collapsible elements
 
 class SettingsPage(DefaultPage):
     
     header_buttons = []
     footer_buttons = [] 
-    content = SettingsPageContent(id='settings_content')  # Placeholder for content
+    
     
       # Placeholder for content
     label = "Settings Page"
       # Placeholder for content
     def __init__(self):
         self.app = app.current_app
+        self.content = SettingsPageContent(id='settings_viewer')
         super().__init__(name='settings')
+        
         @self.route('/settings')
         def settings():
-            return render_template('settings.html', header_buttons=SettingsPage.header_buttons, footer_buttons=SettingsPage.footer_buttons, content=SettingsPage.content)
-    blueprint = Blueprint('settings', __name__, template_folder='../../frontend/templates', static_folder='../../frontend/static')
-    
-    
-    @blueprint.route('/label')
-    def label(self):
-        return self.label
+            return render_template('settings.html', header_buttons=SettingsPage.header_buttons, footer_buttons=SettingsPage.footer_buttons, content=self.content)
+        @self.route('/settings/get_device_info', methods=['GET'])
+        def get_device_configs():
+            try:
+                device_configs = ConfigHelper().get_all_device_configs()
+                if not device_configs:
+                    raise ValueError("No device configurations found.")
+
+                device_containers = [
+                    DeviceSettingContainer(
+                    device_id=device_id, 
+                    device_name=device_data.get('host', 'Unknown Device')
+                    ).rendered_html()
+                    for device_id, device_data in device_configs.get('devices', {}).items()
+                ]
+                return jsonify({'html': ''.join(device_containers)})
+            except Exception as e:
+                app.logger.error(f"Error fetching device configs: {e}")
+            return jsonify({'error': 'Failed to fetch device configurations'}), 500
+            
+        
 
 
     

@@ -120,7 +120,7 @@ class ConfigHelper(Helper):
             print(switch)
     
     
-    def get_all_device_configs(self):
+    def get_all_device_configs(self) -> dict:
         def merge_connection_settings(device, device_type, config):
             connection_settings = {}
             for setting in self.connection_defaults:

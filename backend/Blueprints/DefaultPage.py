@@ -12,19 +12,20 @@ class DefaultPage(Blueprint):
     # These now load in the base page, and can be overridden
     header_buttons = [ HeaderButton(label='Header', id='header-button-1'), HeaderButton(label='Buttons', id='header-button-2'), HeaderButton(label='Here', id='header-button-3')]
     footer_buttons = [ FooterButton(label='Footer', id='footer-button-1'), FooterButton(label='Buttons', id='footer-button-2'), FooterButton(label='Here', id='footer-button-3')]
-    content: CommandOutputWidget  = None
+    
     
     
 
     def __init__(self, name):  
     
-        self.content = None
+        self.content = self.content if hasattr(self, 'content') else None
+        
         
         #self.quick_connects = quick_connects
         #self.connect_dropdown = connect_dropdown
         #self.header_buttons = header_buttons
         #self.footer_buttons = footer_buttons
-        super().__init__(name=name, import_name=__name__, template_folder='../../frontend/templates', static_folder='../../frontend/static')
+        super().__init__(name=name, import_name=__name__, template_folder='../../frontend/templates', static_folder='../../frontend/static', )
     def get_content(self):
         return self.content
    

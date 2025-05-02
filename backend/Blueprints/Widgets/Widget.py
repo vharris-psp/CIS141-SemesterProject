@@ -142,7 +142,16 @@ class Widget:
         # Convert the widget to a string representation
         return self.html if hasattr(self, 'html') else f"{self.name} widget"
 
-        
+    def to_dict(self):
+        # Convert the widget to a dictionary representation
+        return {
+            'id': self.id,
+            'name': self.name,
+            'html': self.html,
+            'description': self._description,
+            'css_class': self.__get_classes(),
+            'children': [child.to_dict() for child in self.children]
+        }
     
     
 

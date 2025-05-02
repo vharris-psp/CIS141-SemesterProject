@@ -11,7 +11,8 @@ class HomePage(DefaultPage):
     # Removed now that Page inherits from blueprint
     #blueprint = Blueprint('home', __name__, template_folder='../../frontend/templates', static_folder='../../frontend/static')
     def __init__(self):
-        super().__init__(name='home')
+        self.name = 'home'
+        super().__init__(name=self.name)
         @self.route('/')
         def index():
             return render_template('index.html', header_buttons=HomePage.header_buttons, footer_buttons=HomePage.footer_buttons, content=HomePage.content)

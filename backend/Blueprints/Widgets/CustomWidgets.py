@@ -173,7 +173,7 @@ class ConfigCollapsible(Collapsible):
     _default_css_class = "config-collapsible"
     def __init__(self, id: str, label_text: str, collapsed_symbol='>', expanded_symbol='V', config_elements: dict = None):
         self.inner_html = label_text
-        self.children = [el for el in config_elements.values()]
+        
         super().__init__(id=id, collapsed_symbol=collapsed_symbol, expanded_symbol=expanded_symbol, label_text=label_text)
    
 

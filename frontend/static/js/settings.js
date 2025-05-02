@@ -1,47 +1,14 @@
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('host').value = 'tech-mdf';
-    document.getElementById('username').value = 'vharris';
-    document.getElementById('password').value = 'password';
-    document.getElementById('command').value = 'show run int fi 1/0/1';
+document.addEventListener('DOMContentLoaded', () => {    
+  
+    fetchDeviceConfigs();
   });
 
-document.getElementById('runCommand').addEventListener('click', runCommand);
-document.getElementById('testAPI').addEventListener('click', testAPI);
 
-async function testAPI() {
-  try {
-    const response = await fetch('http://127.0.0.1:5000/test_api', {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
-    });
-    const responseData = await response.json();
-    updateOutput(responseData.message);
-  } catch (err) {
-    updateOutput('Error: ' + err.message);
-  } 
-}
+
+
 async function login() {
   const username = document.getElementById('username').value;
   const password = document.getElementById('password').value;
-
-  try {
-    const response = await fetch('http://127.0.0.1:5000/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
-    });
-
-    if (response.ok) {
-      const responseData = await response.json();
-      localStorage.setItem('authToken', responseData.token); // Use localStorage for cross-page persistence
-      updateOutput('Login successful!');
-      window.location.href = '/dashboard.html'; // Redirect to another page after login
-    } else {
-      updateOutput('Login failed: ' + response.statusText);
-    }
-  } catch (err) {
-    updateOutput('Error: ' + err.message);
-  }
 }
 
 function addAuthTokenToRequest(headers) {
@@ -52,43 +19,52 @@ function addAuthTokenToRequest(headers) {
   return headers;
 }
 
-// Modify runCommand to include the token
-function runCommand() {
-  const host = document.getElementById('host').value;
-  const command = document.getElementById('command').value;
 
-  fetch('http://127.0.0.1:5000/send_command', {
-    method: 'POST',
-    headers: addAuthTokenToRequest({ 'Content-Type': 'application/json' }),
-    body: JSON.stringify({ host, command })
-  })
-    .then(res => res.json())
-    .then(responseData => {
-      document.getElementById('output').textContent = responseData.output;
-    })
-    .catch(err => {
-      document.getElementById('output').textContent = 'Error: ' + err.message;
-    });
+async function populate_device_config_elements(device_list) {
+  console.log(device_list);
 }
-function updateOutput(message) {
-  document.getElementById('output').textContent = message;
+async function get_device_info() {
+    console.log('Fetching device info...');
+    //fetch('/settings/get_device_info')
+    //    .then(response => response.json())
+    //    .then(data => {
+    //        document.getElementById('device_info').innerText = JSON.stringify(data, null, 2);
+    //    })
+    //    .catch(error => {
+    //        console.error('Error fetching device info:', error);
+    //    });
+    try {
+      const response = await fetch('/settings/get_device_info', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const responseData = await response.json();
+      await fet(responseData);
+    } catch (err) {
+      console.log('Error: ' + err.message);
+    } 
 }
-function runCommand() {
-    const host = document.getElementById('host').value;
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-    const command = document.getElementById('command').value;
-    
-    fetch('http://127.0.0.1:5000/send_command', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ host, username, password, command })
-    })
-    .then(res => res.json())
-    .then(responseData => {
-      document.getElementById('output').textContent = responseData.output;
-    })
-    .catch(err => {
-      document.getElementById('output').textContent = 'Error: ' + err.message;
+async function fetchDeviceConfigs() {
+  const device_config_collapsible = $('[id^="configcollapsible_"]');
+  try {
+    const response = await fetch('/settings/get_device_configs', {
+      method: 'GET',
+      headers: addAuthTokenToRequest({ 'Content-Type': 'application/json' })
     });
+    const responseData = await response.json();
+
+    if (responseData.error) {
+      console.error('Error fetching device configurations:', responseData.error);
+      return;
+    }
+
+    const container = document.getElementById('device-config-container');
+    if (container) {
+      container.innerHTML = responseData.html;
+    } else {
+      console.error('Device config container not found in the DOM.');
+    }
+  } catch (error) {
+    console.error('Error fetching device configurations:', error);
   }
+}

@@ -16,7 +16,10 @@ class Container(Widget):
             self.label = None
         self.before = self.label   
         self.id: str = id
-        self.children: list = children
+        if hasattr(self, 'children') and children is None:
+            self.children = self.children
+        else:
+            self.children = children if children is not None else []
         super().__init__(id=id)
     
     
