@@ -6,46 +6,54 @@ class Container(Widget):
     _default_css_class = "container"
     _description = "Base container widget"
     
-    def __init__(self, id: str, children: list | None = None, label: Label | str | None = None):
+    def __init__(self, children: list | None = None, label: Label | str | None = None):
+        # This must be called first so the id can be used in the label
         
+
         if isinstance(label, str):
-            self.label = Label(label)
+            self.label = Label(label_text=label, label_for=self)
         elif isinstance(label, Label):
             self.label = label
         elif label is None:
             self.label = None
         self.before = self.label   
-        self.id: str = id
+        
         if hasattr(self, 'children') and children is None:
             self.children = self.children
         else:
             self.children = children if children is not None else []
-        super().__init__(id=id)
+        super().__init__()
     
     
 class VerticalGroup(Container):
     
     css_class = "vertical-group"
     _description = "Vertical group container widget"
-    def __init__(self, id: str):
-        super().__init__(id=id)
+    def __init__(self):
+        super().__init__()
     
     
 class HorizontalGroup(Container):
     css_class = "horizontal-group"
     _description = "Horizontal group container widget"
-    def __init__(self, id: str):  
-        super().__init__ (id=id)
+    def __init__(self):  
+        super().__init__()
     
 
 class Collapsible(Container):
-    css_class = "collapsible"
+    css_class = "accordion"
     _description = "Collapsible container widget"
-    def __init__(self, id: str, collapsed_symbol='>', expanded_symbol = 'V', label_text: Label | str | None = None):
+    def __init__(self, collapsed_symbol='>', expanded_symbol = 'V', label_text: Label | str | None = None):
+        self.inner_html = f"<h3>{label_text}</h3>"
         self.collapsed_symbol = collapsed_symbol
         self.expanded_symbol = expanded_symbol
-        super().__init__(id=id, label=label_text)
-        
-        
+        super().__init__()
+class Wrapper(Container):
+    css_class = "wrapper"
+    _description = "Wrapper container widget"
+    def __init__(self, children: list | None = None, label: Label | str | None = None, classes: str | None = None):
+        self.css_class = classes if classes is not None else self.css_class 
+        self.children = children if children is not None else []
+        super().__init__()
         
     

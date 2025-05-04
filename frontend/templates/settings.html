@@ -1,8 +1,21 @@
+{% set tabs = [
+    {'label': 'General', 'href': '/settings', 'active': True},
+    {'label': 'Devices', 'href': '/settings/devices', 'active': False},
+    {'label': 'Notifications', 'href': '/settings/notifications', 'active': False}
+  ] %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/settings.css') }}" defer>
+<script src="{{ url_for('static', filename='js/settings.js') }}" defer></script>
 {% extends 'DefaultPage.html' %}
+
 {% block title %} Home {% endblock %}
+
+
 {% block content %}
 
 
+
+
+
 {% include 'includes/add_device.html' %}
-<pre id="output"></pre>
+
 {% endblock %}

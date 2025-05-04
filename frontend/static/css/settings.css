@@ -1,0 +1,68 @@
+.settings-viewer {
+    display: block;
+}
+.config-collapsible {
+}
+.static-label {
+ 
+}
+.config-collapsible > * {
+
+}
+.device-setting-container {
+ 
+}
+/* Apply base styles */
+.device-setting-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
+    box-sizing: border-box;
+  }
+  
+  /* Ensure each label/input pair sits side-by-side */
+  .config-input-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
+  /* Labels on the left, inputs on the right */
+  .config-input-wrapper label {
+    flex: 0 0 120px; /* fixed width for alignment */
+    font-weight: 600;
+    text-align: right;
+  }
+  
+  /* Input widgets should fill the remaining space */
+  .config-input-wrapper .input-widget {
+    flex: 1;
+  }
+  
+  /* Optional: Style inputs inside .input-widget if needed */
+  .input-widget input,
+  .input-widget select,
+  .input-widget textarea {
+    width: 100%;
+    padding: 0.4rem 0.6rem;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  /* Parent of all device-setting containers */
+.ui-accordion-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 2fr));
+    gap: 2rem;
+    padding: 1rem;
+    box-sizing: border-box;
+  }
+  
+  /* Optional: make each device-setting-container stand out */
+  .device-setting-container {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }

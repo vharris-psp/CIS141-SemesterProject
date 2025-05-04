@@ -1,9 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {    
   
-    fetchDeviceConfigs();
+    fetchDevices().then(() => {
+
+    container.find('.accordion').accordion({
+      collapsible: true,
+      heightStyle: "content"
+    });
   });
-
-
+});
+class Device {
+  constructor(name, config) {
+    this.name = name;
+    this.config = config;
+  }
+}
 
 
 async function login() {
@@ -44,27 +54,20 @@ async function get_device_info() {
       console.log('Error: ' + err.message);
     } 
 }
-async function fetchDeviceConfigs() {
-  const device_config_collapsible = $('[id^="configcollapsible_"]');
-  try {
-    const response = await fetch('/settings/get_device_configs', {
-      method: 'GET',
-      headers: addAuthTokenToRequest({ 'Content-Type': 'application/json' })
-    });
-    const responseData = await response.json();
+async function fetchDevices() {
+  const response = await fetch('/settings/get_device_list', );
+  const data = await response.text();
+  container = $('.settings-viewer');
+  container.append(data);
 
-    if (responseData.error) {
-      console.error('Error fetching device configurations:', responseData.error);
-      return;
-    }
 
-    const container = document.getElementById('device-config-container');
-    if (container) {
-      container.innerHTML = responseData.html;
-    } else {
-      console.error('Device config container not found in the DOM.');
-    }
-  } catch (error) {
-    console.error('Error fetching device configurations:', error);
-  }
+
+ 
+
+
+  
+}
+
+async function fetchWidget(){
+
 }

@@ -4,7 +4,7 @@
 # from textual.keys import Keys
 # from textual.containers import HorizontalGroup, VerticalGroup, Vertical, Grid
 from backend.Blueprints.Widgets import Input, Static
-from backend.Blueprints.Widgets.Container import VerticalGroup, HorizontalGroup, Collapsible
+from backend.Blueprints.Widgets.Container import VerticalGroup, HorizontalGroup, Collapsible, Wrapper
 from backend.api.helpers.ConfigHelper import ConfigHelper
 # from textual.widgets import Switch, Static, Button, Collapsible, Checkbox, Label, Input, Pretty, TextArea, Select
 # from textual.app import ComposeResult
@@ -143,38 +143,49 @@ from backend.api.helpers.ConfigHelper import ConfigHelper
 
 class ConfigInputContainer(HorizontalGroup):
     css_class = "config-input"
+    _html_tag = "input"
     def __init__(self, setting: str, value: str):
+        input = Input.Input(value=value)
+        self.children = [Wrapper(children = [Static.Label(label_text=setting, label_for=input), input], classes='config-input-wrapper')]
         
-        self.children = [Static.Label(label_text=setting), Input.Input(id=f'{setting}-input', value=value)]
 
-        super().__init__(id=f'{setting}config-input')
+        super().__init__()
         
         
         
 class ConfigContainer(VerticalGroup):
     css_class = "config-container"
-    def __init__(self, setting: str, data: dict):
+    def __init__(self, data: dict):
         self.data = data   
-        super().__init__(id=f'{setting}-config-container')
+        super().__init__()
    
 
 class DeviceSettingContainer(ConfigContainer):
     _description = "Device Setting Container"
-    css_class = "device-setting-container"
+    css_class = "container device-setting-container"
     def __init__(self, device: str, data: dict):
+
         self.device = device
         self.data = data
         self.children = [ConfigInputContainer(setting=setting, value=value) for setting, value in data.items()]
-        super().__init__(setting=f'{device}', data=data)
+        self.children.insert(0, Static.Label(label_text=device, label_for=self))
+        super().__init__(data=data)
         
         
    
-class ConfigCollapsible(Collapsible):
+class Accordion(Collapsible):
     _default_css_class = "config-collapsible"
-    def __init__(self, id: str, label_text: str, collapsed_symbol='>', expanded_symbol='V', config_elements: dict = None):
-        self.inner_html = label_text
+    css_class = "accordion"
+    def __init__(self, label_text: str, collapsed_symbol='>', expanded_symbol='V', config_elements: list | dict | None = None):
         
-        super().__init__(id=id, collapsed_symbol=collapsed_symbol, expanded_symbol=expanded_symbol, label_text=label_text)
+
+        
+        if isinstance(config_elements, dict):
+            self.children = [Wrapper(config_elements.values())]
+        elif isinstance(config_elements, list):
+            self.children = config_elements
+       
+        super().__init__(collapsed_symbol=collapsed_symbol, expanded_symbol=expanded_symbol, label_text=label_text)
    
 
         
@@ -185,8 +196,8 @@ class ConfigCollapsible(Collapsible):
 class ConnectionSelector(Collapsible):
     _default_css_class = "connection-selector"
     
-    def __init__(self, id, children: list, collapsed_symbol= '>', expanded_symbol='V', title = 'Connection Selector'):    
-        super().__init__(id, children, collapsed_symbol='>>>', expanded_symbol='V', label_text=title)
+    def __init__(self, children: list, collapsed_symbol= '>', expanded_symbol='V', title = 'Connection Selector'):    
+        super().__init__(children, collapsed_symbol='>>>', expanded_symbol='V', label_text=title)
         
         
 #     def compose(self) -> ComposeResult:
@@ -405,7 +416,7 @@ class ConnectionSelector(Collapsible):
 #         super().__init__()
 class CommandOutputWidget(VerticalGroup):
      _default_css_class = "command-output-widget"
-     def __init__(self, id: str, children: list = None):
+     def __init__(self, children: list = None):
          super().__init__(id, children)
          self.boxes = {}
 #     def _on_mount(self):

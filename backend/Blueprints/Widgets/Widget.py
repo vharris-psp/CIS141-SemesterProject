@@ -1,6 +1,7 @@
 import uuid
 import traceback
 import sys
+from flask import render_template_string
 class WidgetWarning(Exception):
     """Custom exception for widget errors."""
     def __init__(self, message):
@@ -29,18 +30,26 @@ class Widget:
     _default_css_class = "widget"
 
     _description = "Base widget class"
-    
+    _template = "widgets/base_widget.html"
     css_class = None
     
-
-    def __init__(self, id: str):
+    def __new__(cls, *args, **kwargs):
+        instance = super().__new__(cls)
+        instance.serialized_id = None
+        instance.id = lambda: instance.serialized_id if instance.serialized_id else instance.__serialize_id("default_id")
+        instance.name = instance.__class__.__name__
+        return instance
+    
+    def __init__(self):
+        
         
         self.before: Widget = self.before if hasattr(self, 'before') else None
         self.after: Widget = self.after if hasattr(self, 'after') else None
+        self.other_attributes: dict = self.other_attributes if hasattr(self, 'other_attributes') else {}
         self.class_list = []
-        self.name = self.__class__.__name__
-        self.id = id
-        self.id = self.__serialize_id() 
+        
+        
+        
         if not hasattr(self, 'inner_html'):
             self.inner_html = None
         if self.css_class:
@@ -76,22 +85,30 @@ class Widget:
         except WidgetWarning as e:
             print(f"Error: Widget ({self.__class__.__name__}) does not have the required attributes. {e}")
             raise e
-    def __serialize_id(self):
+    def __call__(self):
+        # This method allows the widget to be called like a function
+        if hasattr(self, 'html'):
+            return self.html
+    def __serialize_id(self, id: str):
         # Serialize the ID to a format suitable for HTML
         
         unique_suffix = str(uuid.uuid4())[:8]  # Generate a short unique identifier
         try:
 
-            return f"{self.id(' ', '_').lower()}_{unique_suffix}"
+            return f"{id(' ', '_').lower()}_{unique_suffix}"
         except AttributeError as e:
             e = WidgetWarning(e)
             print(f"Error serializing ID: {e} - \033[31m{self.__class__.__name__}\033[0m - {self.name}")
             raise e
         finally:
             # Ensure the ID is a string
-                
-            return f"{self.name.replace(' ', '_').lower()}_{unique_suffix}"
-        # Replace spaces with underscores and convert to lowercase
+            self.serialized_id = f"{self.name.replace(' ', '_').lower()}_{unique_suffix}"
+            return self.serialized_id
+        # Replace spaces with underscores and convert to lowercase    
+    
+    
+
+   
 
     
     def __get_classes(self):
@@ -113,14 +130,27 @@ class Widget:
         closing_tag = f'</{self._html_tag}>'
         
 
-        opening_tag = f'<{self._html_tag} id="{self.id}" class="{self.__get_classes()}">'
+        additional_attributes = " ".join(f'{attr}="{val}"' for attr, val in self.other_attributes.items())
+        opening_tag = f'<{self._html_tag} id="{self.id()}" class="{self.__get_classes()}" {additional_attributes}>'
+        
+                
         html += opening_tag
         if hasattr(self, 'inner_html') and self.inner_html:
             html += self.inner_html
         
         if self.children:
             for child in self.children:
-                html += child.rendered_html
+                try: 
+                    if hasattr(child, 'rendered_html'):
+                        html += child.rendered_html
+                    else:
+                        # If the child does not have rendered_html, call its __get_html method
+                        child.rendered_html = child.__get_html()
+        
+                except AttributeError as e:
+                    e = WidgetWarning(e)
+                    print(f"Error: Unable to generate HTML for child widget (\033[31m{child.name}\033[0m): {e} - \033[31m{self.__class__.__name__}\033[0m - {self.name}")
+                    raise e
         html += f'{closing_tag}'
         if self.after: 
             html += self.after.rendered_html

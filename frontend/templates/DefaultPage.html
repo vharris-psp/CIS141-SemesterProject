@@ -4,7 +4,10 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" defer>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/widgets.css') }}" defer>
-    <script src="{{ url_for('static', filename='js/settings.js') }}" defer></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+    
 </head>
 
 <body>
@@ -38,6 +41,7 @@
         {% endfor %}
         
         {% include 'includes/footer.html' %}
+        <script src="{{ url_for('static', filename='js/after.js') }}" defer></script>
     </footer>
 </body>
 
