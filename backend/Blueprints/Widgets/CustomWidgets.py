@@ -3,8 +3,10 @@
 # from textual import on, work
 # from textual.keys import Keys
 # from textual.containers import HorizontalGroup, VerticalGroup, Vertical, Grid
+from typing import Container
 from backend.Blueprints.Widgets import Input, Static
 from backend.Blueprints.Widgets.Container import VerticalGroup, HorizontalGroup, Collapsible, Wrapper
+from backend.Blueprints.Widgets.Widget import Widget
 from backend.api.helpers.ConfigHelper import ConfigHelper
 # from textual.widgets import Switch, Static, Button, Collapsible, Checkbox, Label, Input, Pretty, TextArea, Select
 # from textual.app import ComposeResult
@@ -139,52 +141,36 @@ from backend.api.helpers.ConfigHelper import ConfigHelper
 #         self.mount(self.connection_indicator)
 #         return super()._on_mount(event)
 
-
-
-class ConfigInputContainer(HorizontalGroup):
-    css_class = "config-input"
-    _html_tag = "input"
-    def __init__(self, setting: str, value: str):
-        input = Input.Input(value=value)
-        self.children = [Wrapper(children = [Static.Label(label_text=setting, label_for=input), input], classes='config-input-wrapper')]
-        
-
-        super().__init__()
-        
-        
-        
-class ConfigContainer(VerticalGroup):
-    css_class = "config-container"
-    def __init__(self, data: dict):
-        self.data = data   
-        super().__init__()
-   
-
-class DeviceSettingContainer(ConfigContainer):
-    _description = "Device Setting Container"
-    css_class = "container device-setting-container"
-    def __init__(self, device: str, data: dict):
-
-        self.device = device
-        self.data = data
-        self.children = [ConfigInputContainer(setting=setting, value=value) for setting, value in data.items()]
-        self.children.insert(0, Static.Label(label_text=device, label_for=self))
-        super().__init__(data=data)
-        
+       
         
    
 class Accordion(Collapsible):
     _default_css_class = "config-collapsible"
     css_class = "accordion"
     def __init__(self, label_text: str, collapsed_symbol='>', expanded_symbol='V', config_elements: list | dict | None = None):
+        # TODO: Add symbol functionality to the label
+        # TODO: Create a default method to generate children from config elements if they are not passed as Widgets
+        #self.inner_html = f"<h3>{label_text}</h3>"
         
 
+        self.css_class += ' accordion'
+        if hasattr(self, 'label'):
+            raise Warning(f"Label already exists for {self.__class__.__name__} -- {self.label}")
+        else:
+            self.label = Static.AccordionLabel(label_text, inside_widget=True)
+            
+            
+        try: 
+            if isinstance(config_elements, dict):
+                self.children = [Wrapper(children=config_elements.values())]
+            elif isinstance(config_elements, list):
+                self.children = Wrapper(children=config_elements)
         
-        if isinstance(config_elements, dict):
-            self.children = [Wrapper(config_elements.values())]
-        elif isinstance(config_elements, list):
-            self.children = config_elements
-       
+                
+        except Exception as e:
+            message = f"Warning: {e} in {self.__class__.__name__} for {self.device_type}"
+            self.log_warning(message)
+            raise Warning(message)  
         super().__init__(collapsed_symbol=collapsed_symbol, expanded_symbol=expanded_symbol, label_text=label_text)
    
 

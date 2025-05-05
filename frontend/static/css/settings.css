@@ -1,68 +1,129 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+body{
+    background-color: #f0f0f0;
+    color: #333;
+}
 .settings-viewer {
     display: block;
+    width: 82%;
+    margin: 5% auto;
+    background-color: #f0f0f0;
 }
-.config-collapsible {
+.device-group-container {
+    background-color: #f0f0f0;
+    display: block;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    border: 3px solid #ccc;
+    border-radius: 1.2em;
 }
-.static-label {
- 
+.accordion .accordion-label {
+    color: #f0f0f0;
+    background-color: #3c3939;
+    text-align: left;
 }
-.config-collapsible > * {
+.device-group-container .accordion-label{ 
+    top: 0;
+    width: auto;
+    min-height: 3em;
+    align-items: center;
+    border-radius: .9em .9em .3em .3em;
+    padding: 1.5em;
+    
+    justify-content: center;
+    vertical-align: middle;
+    
 
 }
-.device-setting-container {
- 
+.device-group-container .accordion-label:hover{
+    background-color: #555454;
 }
-/* Apply base styles */
-.device-setting-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-    padding: 1rem;
-    box-sizing: border-box;
-  }
-  
-  /* Ensure each label/input pair sits side-by-side */
-  .config-input-wrapper {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  
-  /* Labels on the left, inputs on the right */
-  .config-input-wrapper label {
-    flex: 0 0 120px; /* fixed width for alignment */
-    font-weight: 600;
-    text-align: right;
-  }
-  
-  /* Input widgets should fill the remaining space */
-  .config-input-wrapper .input-widget {
-    flex: 1;
-  }
-  
-  /* Optional: Style inputs inside .input-widget if needed */
-  .input-widget input,
-  .input-widget select,
-  .input-widget textarea {
+.device-group-container .accordion-label:active{
+    font-weight: bold;
+    margin-right: 10px;
+    background-color: #555454;
+}
+.device-type-container .accordion-label{
+    top: 0;
     width: 100%;
-    padding: 0.4rem 0.6rem;
-    font-size: 1rem;
-    box-sizing: border-box;
-  }
-  /* Parent of all device-setting containers */
-.ui-accordion-content {
+    min-height: 3em;
+    align-items: center;
+    border-radius: .9em .9em .3em .3em;
+    text-align: left;
+    vertical-align: middle;
+}
+.device-type-container {
+    background-color: #f0f0f0;
+    width: 96%;
+    margin: 1px auto;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-rows: repeat(auto-fill, minmax(200px, 1fr));
+    justify-content: center;
+    align-items: center;
+    border: 3px solid #ccc;
+    border-radius: 1.2em;
+   
+}
+.device-type-container .accordion-label:hover{
+    background-color: #555454;
+}
+
+.device-type-container .wrapper .device-setting-container {
+    color: #f0f0f0;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 2fr));
-    gap: 2rem;
-    padding: 1rem;
-    box-sizing: border-box;
-  }
-  
-  /* Optional: make each device-setting-container stand out */
-  .device-setting-container {
+    background-color: #333;
     border: 1px solid #ccc;
-    padding: 1rem;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-  }
+    padding: 0.5em;
+    margin: 0.5em;
+    grid-template-columns: 1fr;
+    width: calc(100% - 1em); 
+    text-align: center;
+}
+
+.device-type-container .ui-accordion-content {
+    background-color: #f0f0f0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(20rem, 2fr));
+    grid-template-rows: repeat(auto-fill, 1fr);
+    gap: 1rem;
+}
+
+.device-setting-container .config-input-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 95%
+
+}
+.device-setting-container .config-input-container > * {
+    height: 95%;
+    margin-left: .1em;
+    color: #3c3939;
+}
+.device-setting-container .config-input-container > label {
+    width: 30%;
+}
+.device-setting-container .config-input-container > input {
+    width: 60%;
+    background-color: #ffffff;
+    border: 2px solid #3c3939;
+    border-radius: 0.5em;
+    padding: 0.5em;
+    font-size: 1em;
+    color: #333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.device-setting-container .config-input-container > input:focus {
+    border-color: #555454;
+    outline: none;
+    box-shadow: 0 0 5px rgba(85, 84, 84, 0.8);
+}
+
+

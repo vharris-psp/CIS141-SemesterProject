@@ -35,14 +35,7 @@ async function populate_device_config_elements(device_list) {
 }
 async function get_device_info() {
     console.log('Fetching device info...');
-    //fetch('/settings/get_device_info')
-    //    .then(response => response.json())
-    //    .then(data => {
-    //        document.getElementById('device_info').innerText = JSON.stringify(data, null, 2);
-    //    })
-    //    .catch(error => {
-    //        console.error('Error fetching device info:', error);
-    //    });
+
     try {
       const response = await fetch('/settings/get_device_info', {
         method: 'GET',

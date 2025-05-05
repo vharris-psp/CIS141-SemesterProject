@@ -6,10 +6,10 @@
 .widget, .container,.static-widget {
     background-color: red;
     
-    border: 3px solid red !important;
+    border: 3px solid red;
     width: fit-content; /* Example width */
     height: fit-content;
-    color: red !important;
+    color: red;
     min-height: 100px;
     min-width: 100px; /* Example height */
     display: block; /* Ensures they appear as boxes */
@@ -87,32 +87,3 @@
     box-sizing: border-box; /* Ensures padding and border are included in the width/height */
     font-weight: bold; /* Bold text for emphasis */
 }
-.accordion {
-    width: 60%; /* Slightly wider for better content display */
-    margin: 2rem auto; /* Centered with some spacing */
-    background-color: #f9f9f9; /* Light background for contrast */
-    border: 1px solid #ddd; /* Subtle border for separation */
-    border-radius: 8px; /* Rounded corners for a modern look */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
-    overflow: hidden; /* Ensures content stays within bounds */
-}
-
-.accordion div {
-    padding: 1rem; /* Consistent padding for inner content */
-    border-bottom: 1px solid #eee; /* Divider between sections */
-}
-
-.accordion div:last-child {
-    border-bottom: none; /* Remove border for the last section */
-}
-
-.accordion .container {
-    margin-bottom: 1rem; /* Space between containers */
-    padding: 1rem; /* Padding inside containers */
-    background-color: #fff; /* White background for containers */
-    border: 1px solid #ccc; /* Subtle border for containers */
-    border-radius: 4px; /* Slightly rounded corners */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Light shadow for depth */
-}
-
-  

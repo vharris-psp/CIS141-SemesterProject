@@ -2,6 +2,12 @@ import uuid
 import traceback
 import sys
 from flask import render_template_string
+from flask import current_app
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from backend.Blueprints.Widgets.Static import Label
+
 class WidgetWarning(Exception):
     """Custom exception for widget errors."""
     def __init__(self, message):
@@ -32,7 +38,10 @@ class Widget:
     _description = "Base widget class"
     _template = "widgets/base_widget.html"
     css_class = None
-    
+    try: 
+        app = current_app
+    except RuntimeError:
+        app = None
     def __new__(cls, *args, **kwargs):
         instance = super().__new__(cls)
         instance.serialized_id = None
@@ -42,7 +51,7 @@ class Widget:
     
     def __init__(self):
         
-        
+        self.label: 'Label' = self.label if hasattr(self, 'label') else None
         self.before: Widget = self.before if hasattr(self, 'before') else None
         self.after: Widget = self.after if hasattr(self, 'after') else None
         self.other_attributes: dict = self.other_attributes if hasattr(self, 'other_attributes') else {}
@@ -107,7 +116,12 @@ class Widget:
         # Replace spaces with underscores and convert to lowercase    
     
     
-
+    def log_warning(self, message: str):
+        # Log a warning message
+        if self.app:
+            self.app.logger.warning(message)
+        else:
+            print(f"Warning: {message}")
    
 
     
@@ -124,14 +138,21 @@ class Widget:
     def __get_html(self):
         # Generate HTML for the widget
         html = ''
+        
         if self.before: 
             html += self.before.rendered_html
-
-        closing_tag = f'</{self._html_tag}>'
         
-
+        
+        
         additional_attributes = " ".join(f'{attr}="{val}"' for attr, val in self.other_attributes.items())
-        opening_tag = f'<{self._html_tag} id="{self.id()}" class="{self.__get_classes()}" {additional_attributes}>'
+        if self.label:
+            if self.label.inside_widget:             
+                opening_tag = f'<{self._html_tag} id="{self.id()}" class="{self.__get_classes()}" {additional_attributes}>' + self.label.html
+            else:
+                opening_tag = self.label.html + f'<{self._html_tag} id="{self.id()}" class="{self.__get_classes()}" {additional_attributes}>'
+        else:
+            opening_tag = f'<{self._html_tag} id="{self.id()}" class="{self.__get_classes()}" {additional_attributes}>'
+        closing_tag = f'</{self._html_tag}>'
         
                 
         html += opening_tag

@@ -83,6 +83,6 @@ connection_helper = ConnectionHelper()
 # Validate widget CSS before running the app
 if validate_widget_css():
     if __name__ == '__main__':
-        app.run(debug=True)
+        app.run(debug=False)
 else:
     print("Application cannot start due to missing CSS selectors.")

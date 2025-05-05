@@ -8,11 +8,11 @@ class Input(Widget):
     """
     _description = "Input widget"
     css_class = "input-widget"
-    def __init__(self,  value: str = "", placeholder: str = "", max_length: int = None, name="Input", description: str = "Input widget", widget_type: str = "input", data: dict = None):
-        self.value = value
-        self.placeholder = placeholder
-        self.max_length = max_length
-        self.type = "input"
+    _html_tag = "input"
+    def __init__(self,  value: str = "", placeholder: str = "", max_length: int = None):
+        self.other_attributes = {'value': value, 'placeholder': placeholder, 'maxlength': max_length} if max_length else {'value': value, 'placeholder': placeholder}
+        
+        
         super().__init__()
     
         

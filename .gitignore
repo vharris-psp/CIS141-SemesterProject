@@ -9,6 +9,6 @@ __pycache__/
 *.log
 *.env
 *.DS_Store
-backend/api/config/conf.*
+backend/api/config/*
 lib/
 SECRET

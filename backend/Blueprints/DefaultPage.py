@@ -4,15 +4,21 @@
 #from textual.widget import Widget
 #from textual.containers import HorizontalGroup, VerticalGroup
 #from widgets.CustomWidgets import Command_Output_Widget, SwitchQuickConnectButtons, SwitchSelectDropdown, WLCQuickConnectButtons, WLCConnectionDropdown, QuickConnectButtons, ConnectionSelector
-from flask import Flask, Blueprint
+from flask import Flask, Blueprint, current_app
 from backend.Blueprints.Widgets.Buttons import HeaderButton, FooterButton
 from backend.Blueprints.Widgets.CustomWidgets import CommandOutputWidget
-    
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING: 
+    import backend.Blueprints.Widgets as Widgets
+    from backend.Blueprints.Widgets import Container, Static
+    from backend.Blueprints.SettingsPage import SettingsPage
+
 class DefaultPage(Blueprint):
     # These now load in the base page, and can be overridden
     header_buttons = [ HeaderButton(label='Header', id='header-button-1'), HeaderButton(label='Buttons', id='header-button-2'), HeaderButton(label='Here', id='header-button-3')]
     footer_buttons = [ FooterButton(label='Footer', id='footer-button-1'), FooterButton(label='Buttons', id='footer-button-2'), FooterButton(label='Here', id='footer-button-3')]
-    
+    app = current_app    
     
     
 
@@ -29,7 +35,12 @@ class DefaultPage(Blueprint):
     def get_content(self):
         return self.content
    
-
+    def log_warning(self, message: str):
+    # Log a warning message
+        if self.app:
+            self.app.logger.warning(message)
+        else:
+            print(f"Warning: {message}")
     #quick_connects: QuickConnectButtons = None
     #connect_dropdown: ConnectionSelector = None
     #footer_buttons = _footer_buttons()
