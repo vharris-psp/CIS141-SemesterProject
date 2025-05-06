@@ -19,12 +19,27 @@ class SettingsPage(DefaultPage):
     class ConfigInputContainer(Wrapper):
         css_class = "config-input-container"
         _html_tag = "div"
-        def __init__(self, setting: str, value: str):
-            input = Input.Input(value=value)
-            self.children =[Static.Label(label_text=setting, label_for=input), input]
-
-
+        def __init__(self, setting: str, field_dict: dict, current_value: str):
+            ''' 
+            'type' =
+            'text'
+            'label' =
+            'Device Name'
+            'placeholder' =
+            'Enter the device name'
+            'required' =
+            True
+            'dynamic' =
+            False
+            '''
+            input = None
+            if field_dict.get('type') == 'text':
+                input = Input.Input(value=current_value, placeholder=field_dict.get('placeholder'))
+            else:
+                input = Input.Input(value=current_value, placeholder='')
+            self.children =[Static.Label(label_text=field_dict['label'], label_for=input), input]
             super().__init__()
+            
     class ConfigContainer(VerticalGroup):
         css_class = "config-container"
         def __init__(self, data: dict):
@@ -33,13 +48,15 @@ class SettingsPage(DefaultPage):
     class DeviceSettingContainer(ConfigContainer):
         _description = "Device Setting Container"
         css_class = "container device-setting-container"
-        def __init__(self, device: str, data: dict):
+        def __init__(self, device: str, fields: dict):
             self.device = device
-            self.data = data
+            self.data = fields
             # This duplicates label and causes problems TODO: FIX THIS
             #self.label = Static.Label(label_text=f'Configuration for: {device}', label_for=self)
-            self.children = [SettingsPage.ConfigInputContainer(setting=setting, value=value) for setting, value in data.items()]
-            super().__init__(data=data)
+            #TODO: Make the current values work
+            
+            self.children = [SettingsPage.ConfigInputContainer(setting=setting, field_dict=value, current_value=fields[setting].get('value', '')) for setting, value in fields.items()]
+            super().__init__(data=fields)
     class DeviceTypeContainer(Accordion):
         css_class = "device-type-container"
         def __init__(self, device_type: str, device_elements: dict):
@@ -97,7 +114,7 @@ class SettingsPage(DefaultPage):
                 ##  Load the devices in the following format: 
                 # devices[device_group][device_type][device_id]
                 sorted_devices = {}
-                configuration_file = ConfigHelper().get_frontend_device_config()
+                configuration_file = ConfigHelper().get_current_devices_config()
                 device_list, device_groups, device_types = {}, {}, {}
                 try: 
                     device_list = configuration_file.get('devices', {})
@@ -108,7 +125,7 @@ class SettingsPage(DefaultPage):
                         for device_type in device_types:
                             sorted_devices[group][device_type] = {}
                 except KeyError as e:
-                    self.log_warning(f"Warning: {e} in {self.__class__.__name__}")
+                    self.log_warning(e)
 
                 # Iterate through the devices and sort them into the correct group and type
                 for devices, config in device_list.items(): 
@@ -121,29 +138,36 @@ class SettingsPage(DefaultPage):
                             sorted_devices[device_group][device_type][devices] = config
 
                         except Exception as e:
-                            self.log_warning(f"Warning: {e} in {self.__class__.__name__}")
+                            self.log_warning(e)
                     except KeyError as e:
-                        self.log_warning(f"Warning: {e} in {self.__class__.__name__} for device: '{devices}'")
+                        self.log_warning(e)
                     except Exception as e:
-                        self.log_warning(f"Warning: {e} in {self.__class__.__name__}")
+                        self.log_warning(e)
                 # Iterate through the sorted devices and yeild the group containers and elements
+                devices = {}
+                device_type_containers = {}
                 for device_group, device_type in sorted_devices.items():
+                    
                     device_type_containers = {}
                     try:
                         
                         # Iterate through the device types
                         for device_type, devices in device_type.items():
                             # Iterate through the devices / configs
-                            devices = {device: SettingsPage.DeviceSettingContainer(device=device, data=config) for device, config in devices.items()}
+                            for device, config in devices.items():
+                                field_dict = ConfigHelper().get_device_fields(device)
+                                devices[device] = SettingsPage.DeviceSettingContainer(device=device, fields=field_dict)
+                            #devices = {device: SettingsPage.DeviceSettingContainer(device=device, fields=device_fields) for device, config in devices.items()}
                         
                         device_type_containers[device_type] = SettingsPage.DeviceTypeContainer(device_type=device_type, device_elements=devices)    
-                    
+                            
                     except KeyError as e:
-                        self.log_warning(f"Warning: {e} in {self.__class__.__name__} for group: '{device_group}'")
+                        self.log_warning(e)
                     except Exception as e:
-                        self.log_warning(f"Warning: {e} in {self.__class__.__name__} - Group: {device_group} - Type:{device_type} - Config: {devices}")
-
-                yield SettingsPage.DeviceGroupContainer(group=device_group, child_elements=device_type_containers)()
+                        self.log_warning(e)
+                    
+                yield SettingsPage.DeviceGroupContainer(group=device_group, child_elements=device_type_containers)()    
+                
 
 
 

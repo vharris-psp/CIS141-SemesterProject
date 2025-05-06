@@ -45,7 +45,7 @@ async function get_device_info() {
       await fet(responseData);
     } catch (err) {
       console.log('Error: ' + err.message);
-    } 
+    }
 }
 async function fetchDevices() {
   const response = await fetch('/settings/get_device_list', );

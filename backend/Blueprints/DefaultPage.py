@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     import backend.Blueprints.Widgets as Widgets
     from backend.Blueprints.Widgets import Container, Static
     from backend.Blueprints.SettingsPage import SettingsPage
+import inspect
 
 class DefaultPage(Blueprint):
     # These now load in the base page, and can be overridden
@@ -35,12 +36,21 @@ class DefaultPage(Blueprint):
     def get_content(self):
         return self.content
    
-    def log_warning(self, message: str):
-    # Log a warning message
-        if self.app:
-            self.app.logger.warning(message)
-        else:
-            print(f"Warning: {message}")
+    def log_warning(self, message: str, **kwargs):
+        # Log a warning message with formatted key-value pairs
+        # Inject the class, calling method, and line number into kwargs
+        stack = inspect.stack()
+        if len(stack) > 1:
+            caller_frame = stack[1]
+            caller_class = caller_frame.frame.f_locals.get('self', None).__class__.__name__ if 'self' in caller_frame.frame.f_locals else None
+            caller_method = caller_frame.function
+            caller_line = caller_frame.lineno
+            # Print caller information in a single line
+            caller_info = f"\033[95mCaller Class\033[0m: {caller_class}, \033[95mCaller Method\033[0m: {caller_method}, \033[95mCaller Line\033[0m: {caller_line}"
+            print(caller_info)
+        # Print the message
+        formatted_message = f"\033[93m{message}\033[0m"
+        print(formatted_message)
     #quick_connects: QuickConnectButtons = None
     #connect_dropdown: ConnectionSelector = None
     #footer_buttons = _footer_buttons()

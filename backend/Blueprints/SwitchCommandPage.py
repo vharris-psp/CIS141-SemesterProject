@@ -19,14 +19,16 @@ def contains_show_run(string: str):
 class SwitchCommandScreen(DefaultSwitchScreen):
     # Deprecated, page now inherits from DefaultPage(Blueprint)
     #blueprint = Blueprint('switch_commands', __name__, template_folder='../../frontend/templates', static_folder='../../frontend/static')
+    
     def __init__(self):
+        
         super().__init__(name='switch_commands')
         self.outputs = {}
         
         
         @self.route('/command_page')
         def command_page():
-            return render_template('command_page.html', header_buttons=SwitchCommandScreen.header_buttons, footer_buttons=SwitchCommandScreen.footer_buttons, content=SwitchCommandScreen.content)
+            return render_template('command_page.html', header_buttons=self.header_buttons, footer_buttons=self.footer_buttons, content=self.content)
 
         @self.route('/run_command')
         def run_command():

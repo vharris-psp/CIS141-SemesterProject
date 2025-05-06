@@ -44,11 +44,11 @@
     border: 1px solid #ccc;
     padding: 10px;
     margin: 10px;
-    width: 200px; /* Example width */
-    height: 100px; /* Example height */
-    display: inline-block; /* Ensures they appear as boxes */
-    vertical-align: top; /* Aligns them to the top */
-    box-sizing: border-box; /* Ensures padding and border are included in the width/height */
+    width: 200px; 
+    height: 100px;
+    display: inline-block; 
+    vertical-align: top; 
+    box-sizing: border-box;
 }
 
 .command-output-widget {
@@ -57,18 +57,18 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: black; /* Text color */  
+    color: black; 
 }
 
 /* Add styles or remove the empty ruleset */
 .config-container {
-    display: flex; /* Example style */
-    flex-direction: column; /* Example style */
-    gap: 10px; /* Example style */
+    display: flex; 
+    flex-direction: column; 
+    gap: 10px; 
 }
 .config-item {
-    background-color: #d42828; /* Light background for config items */
-    border: 1px solid #ddd; /* Subtle border for separation */
+    background-color: #d42828; 
+    border: 1px solid #ddd; 
     padding: 10px;
     margin: 0; /* Remove margin since grid handles spacing */
     box-sizing: border-box; /* Ensures padding and border are included in the width/height */

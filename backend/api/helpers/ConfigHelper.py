@@ -45,8 +45,9 @@ class ConfigHelper(Helper):
             return False
         if not self._device_config.get('devices'):
             return False
-        if not self._device_config.get('default_connection_settings'):
-            return False
+        # TODO: This should check all possible default connection settings. Commented out because this is now specific to the default device type
+        #if not self._device_config.get('default_connection_settings'):
+        #    return False
         if not self._device_config.get('building_code_map'):
             return False
         return True
@@ -54,7 +55,7 @@ class ConfigHelper(Helper):
     def __init__(self):
         self.load_config_file()
         self.devices = self._device_config.get('devices')
-        self.connection_defaults = self._device_config.get('default_connection_settings')
+        self.connection_defaults = self._device_config.get('device_types').get('default').get('default_connection_settings')
         super().__init__()
             
     def __del__(self):
@@ -177,7 +178,7 @@ class ConfigHelper(Helper):
             return ip_codes
         except KeyError as e:
             self.app.notify(f"Config Key Error: {e}")
-    def get_frontend_device_config(self) -> dict:
+    def get_current_devices_config(self) -> dict:
         try:
             return {
                 "devices" : self._device_config.get('devices', {}),
@@ -185,7 +186,25 @@ class ConfigHelper(Helper):
                 "device_groups" : self._device_config.get('device_groups', {}),
             }
         except KeyError as e:
-            self.app.notify(f"Config Key Error: {e}")
+          print(f"Config Key Error: {e}")
+    def get_device_fields(self, device: str) -> dict:
+        try:
+            fields = self._device_config.get('device_fields')
+            current_config = self._device_config.get('devices').get(device)
+            for field in fields: 
+                if field in current_config:
+                    fields[field]['value'] = current_config[field]  
+
+            return fields
+                    
+            
+
+            
+        except KeyError as e:
+            print(f"Config Key Error: {e}")
+        
+
+        
     
 
 
