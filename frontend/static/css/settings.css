@@ -125,5 +125,10 @@ body{
     outline: none;
     box-shadow: 0 0 5px rgba(85, 84, 84, 0.8);
 }
+.device-setting-container .config-input-container > .warning-label {
+    color: #ff0000;
+    font-size: 0.8em;
+    margin-left: 0.5em;
+}
 
 

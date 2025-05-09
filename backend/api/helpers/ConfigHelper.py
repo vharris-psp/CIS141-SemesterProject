@@ -89,7 +89,7 @@ class ConfigHelper(Helper):
                 raise InvalidBackupConfigException(f"Backup config file is invalid. {e}")
         except Exception as e:
             raise e
-    def write_config(self, file: _default_file = _default_file.___CONF__):
+    def write_config(self, file: _default_file = _default_file.__DEVICE_CONFIG__):
         with open(file, 'w') as config_file:
             dump(self._device_config, config_file, indent=4)  # Writing as pretty JSON
         
@@ -187,6 +187,63 @@ class ConfigHelper(Helper):
             }
         except KeyError as e:
           print(f"Config Key Error: {e}")
+
+    def validate_field_input(self, field_type, value): 
+        if True:
+            return True
+        else:
+            return False 
+            
+        
+    def save_device_config(self, device:str, config:dict) -> list[dict]:
+        
+            
+        pending_updates = {}
+        device_config = self._device_config.get('devices').get(device)
+        device_fields = self.get_device_fields(device)
+        successful_updates = {}
+        failed_updates = {}
+
+        # First, we validate the input values to ensure they are the expected types
+        for field in config: 
+            if field in device_fields: 
+                if self.validate_field_input(device_fields[field]['type'], config[field]):
+                    # Only Make these checks if the field already exists in the device config.  
+                    if field in device_config:
+                        if config[field] == device_config[field]:
+                            print(f"Field {field} is already set to the same value: {config[field]}")
+                            failed_updates[field] = 'Already set to the same value'
+                            continue
+
+                        elif config[field] == '':
+                            print(f"Field {field} is empty, skipping update.")
+                            failed_updates[field] = f'Unaable to save {field} Empty field'
+                            continue
+                    pending_updates[field] = config[field]
+                else: 
+                    print(f"Invalid field input for {field}: {config[field]}")
+                    failed_updates[field] = 'Invalid field input, expected type: ' + device_fields[field]['type'] + ' but got: ' + str(type(config[field])+ '(' + (config[field])) + ')'
+                    continue
+            else:
+                failed_updates[field] = f'Field {field} not found in device config'
+                continue
+        
+        for field in pending_updates:
+            self._device_config['devices'][device][field] = pending_updates[field]
+            
+            successful_updates[field] = 'Updated'
+        self.commit()
+        return successful_updates, failed_updates
+            
+    def commit(self):
+        try:
+            self.write_config()
+            print("Config changes committed successfully.")
+        except Exception as e:
+            print(f"Error committing config changes: {e}")
+
+
+    
     def get_device_fields(self, device: str) -> dict:
         try:
             fields = self._device_config.get('device_fields')
@@ -196,7 +253,7 @@ class ConfigHelper(Helper):
                     fields[field]['value'] = current_config[field]  
 
             return fields
-                    
+                
             
 
             

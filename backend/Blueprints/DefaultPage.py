@@ -17,8 +17,9 @@ import inspect
 
 class DefaultPage(Blueprint):
     # These now load in the base page, and can be overridden
-    header_buttons = [ HeaderButton(label='Header', id='header-button-1'), HeaderButton(label='Buttons', id='header-button-2'), HeaderButton(label='Here', id='header-button-3')]
-    footer_buttons = [ FooterButton(label='Footer', id='footer-button-1'), FooterButton(label='Buttons', id='footer-button-2'), FooterButton(label='Here', id='footer-button-3')]
+    header_buttons = [ HeaderButton(text='Header'), HeaderButton(text='Buttons'), HeaderButton(text='Here')]
+    footer_buttons = [ FooterButton(text='Footer'), FooterButton(text='Buttons'), FooterButton(text='Exit')]
+    
     app = current_app    
     
     

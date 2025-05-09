@@ -1,10 +1,10 @@
 import time
-from flask import Blueprint, Response, jsonify, render_template, app
+from flask import Blueprint, Response, jsonify, render_template, app, request
 from backend.Blueprints.DefaultPage import DefaultPage
 from backend.Blueprints.Widgets import Input, Static
 from backend.Blueprints.Widgets.Container import HorizontalGroup, VerticalGroup, Wrapper
 from backend.Blueprints.Widgets.CustomWidgets import CommandOutputWidget, Accordion
-from backend.Blueprints.Widgets.Buttons import HeaderButton
+from backend.Blueprints.Widgets.Buttons import HeaderButton, SaveConfigButton, Button
 from backend.api.helpers.ConfigHelper import ConfigHelper
 
 
@@ -21,23 +21,20 @@ class SettingsPage(DefaultPage):
         _html_tag = "div"
         def __init__(self, setting: str, field_dict: dict, current_value: str):
             ''' 
-            'type' =
-            'text'
-            'label' =
-            'Device Name'
-            'placeholder' =
-            'Enter the device name'
-            'required' =
-            True
-            'dynamic' =
-            False
+            'type' = 'text' | 'number' | 'select' | 'checkbox'
+            'label' = 'Device Name'
+            'placeholder' = 'Enter the device name'
+            'required' = True | False
+            'dynamic' = False | False
             '''
             input = None
+            self.other_attributes = {'data-setting': setting}
+            
             if field_dict.get('type') == 'text':
-                input = Input.Input(value=current_value, placeholder=field_dict.get('placeholder'))
+                input = Input.Input(value=current_value, placeholder=field_dict.get('placeholder'), data={'data-setting': setting})
             else:
                 input = Input.Input(value=current_value, placeholder='')
-            self.children =[Static.Label(label_text=field_dict['label'], label_for=input), input]
+            self.children =[Static.Label(label_text=field_dict['label'], label_for=input), input, Static.WarningLabel(label_text='')]
             super().__init__()
             
     class ConfigContainer(VerticalGroup):
@@ -47,15 +44,17 @@ class SettingsPage(DefaultPage):
             super().__init__()
     class DeviceSettingContainer(ConfigContainer):
         _description = "Device Setting Container"
-        css_class = "container device-setting-container"
+        css_class = "container device-setting-container"    
         def __init__(self, device: str, fields: dict):
             self.device = device
             self.data = fields
+            self.other_attributes = {'data-device': device}
             # This duplicates label and causes problems TODO: FIX THIS
             #self.label = Static.Label(label_text=f'Configuration for: {device}', label_for=self)
             #TODO: Make the current values work
-            
+            self.save_button = Wrapper(children=[Static.Label(label_text=f'{device}', label_for=self), SaveConfigButton(text='Save', data={'data-device': device})])
             self.children = [SettingsPage.ConfigInputContainer(setting=setting, field_dict=value, current_value=fields[setting].get('value', '')) for setting, value in fields.items()]
+            self.children.insert(0, self.save_button)
             super().__init__(data=fields)
     class DeviceTypeContainer(Accordion):
         css_class = "device-type-container"
@@ -146,6 +145,7 @@ class SettingsPage(DefaultPage):
                 # Iterate through the sorted devices and yeild the group containers and elements
                 devices = {}
                 device_type_containers = {}
+                device_fields = {}
                 for device_group, device_type in sorted_devices.items():
                     
                     device_type_containers = {}
@@ -157,16 +157,18 @@ class SettingsPage(DefaultPage):
                             for device, config in devices.items():
                                 field_dict = ConfigHelper().get_device_fields(device)
                                 devices[device] = SettingsPage.DeviceSettingContainer(device=device, fields=field_dict)
+                                device_fields[device] = field_dict
                             #devices = {device: SettingsPage.DeviceSettingContainer(device=device, fields=device_fields) for device, config in devices.items()}
                         
                         device_type_containers[device_type] = SettingsPage.DeviceTypeContainer(device_type=device_type, device_elements=devices)    
+                        
                             
                     except KeyError as e:
                         self.log_warning(e)
                     except Exception as e:
                         self.log_warning(e)
-                    
-                yield SettingsPage.DeviceGroupContainer(group=device_group, child_elements=device_type_containers)()    
+                
+                yield [SettingsPage.DeviceGroupContainer(group=device_group, child_elements=device_type_containers)(), device_fields]
                 
 
 
@@ -174,7 +176,7 @@ class SettingsPage(DefaultPage):
 
                     
       
-            return Response(generate(), mimetype='text/html')
+            return jsonify(list(generate()))
                         
                     # try:
                     #     group_element = SettingsPage.DeviceGroupContainer(group=group, child_elements=device_types)
@@ -241,12 +243,47 @@ class SettingsPage(DefaultPage):
                     'device_config': device_config
                 })
             except Exception as e:
-                app.logger.error(f"Error fetching device config for {device_id}: {e}")
+                app.current_app.logger.error(f"Error fetching device config for {device_id}: {e}")
             return jsonify({'error': f'Failed to fetch configuration for device ID: {device_id}'}), 500
         
         def render_devices_container():
             return render_template('widgets/devices_container.html')
         
-        
+        @self.route('/settings/save_device_config/<device_id>', methods=['PUT'])
+        def save_device_config(device_id):
+            try:
+                
+                if not request.is_json:
+                    raise ValueError("Request must be JSON")
+                new_config = request.json
+                
+                if not new_config:
+                    raise ValueError("Configuration data or changes not provided")
+                
+                successful_changes, failed_changes = ConfigHelper().save_device_config(device_id, new_config)
+                return jsonify({
+                    'device_id': device_id,
+                    'successful_changes': successful_changes,
+                    'failed_changes': failed_changes
+                })
+                
+                    
+                        
+                        
+                
+            except Exception as e:
+                app.current_app.logger.error(f"Error saving device config for {device_id}: {e}")
+            return jsonify({'error': f'Failed to save configuration for device ID: {device_id}'}), 500
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
 
     

@@ -1,24 +1,32 @@
 from backend.Blueprints.Widgets.Widget import Widget
 
 class Button(Widget): 
-    def __init__(self, label, id, **kwargs):
-        self.label = label
-        self.id = id
-        self.onclick = kwargs.get('onclick', None)
-        self.classes = kwargs.get('classes', None)
-        self.html = self.generate_html()
+    css_class = "button"
+    _html_tag = "button"
+    _description = "Base button widget"
+    def __init__(self, text: str, data: dict = None):
+        self.inner_html = text
+        self.other_attributes = data
+        super().__init__()
+            
+        
 
-    def generate_html(self):
-        return '<button class="{}" id="{}">{}</button>'.format(
-            self.classes or '', self.id, self.label
-        )
+    
         
 class HeaderButton(Button):
-    def __init__(self, label, id, **kwargs):
-        kwargs['classes'] = 'header-button'
-        super().__init__(label=label, id=id, **kwargs)
+    css_class = "header-button"
+    _description = "Header button widget"
+    def __init__(self, text: str, data: dict = None):
+        super().__init__(text=text, data=data)
         
 class FooterButton(Button):
-    def __init__(self, label, id, **kwargs):
-        kwargs['classes'] = 'footer-button'
-        super().__init__(label=label, id=id, **kwargs)
+    css_class = "footer-button"
+    _description = "Footer button widget"
+    def __init__(self, text: str, data: dict = None):
+        super().__init__(text=text, data=data)
+
+class SaveConfigButton(Button):
+    css_class = "edit-button" 
+    _description = "Edit config button widget"
+    def __init__(self, text: str, data: dict=None):
+        super().__init__(text=text, data=data)

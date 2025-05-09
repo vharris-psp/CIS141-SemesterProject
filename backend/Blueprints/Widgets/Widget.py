@@ -124,7 +124,7 @@ class Widget:
             print(f"Warning: {message}")
    
 
-    
+     
     def __get_classes(self):
         # Generate a string of CSS classes for the widget
         try: 
@@ -138,13 +138,29 @@ class Widget:
     def __get_html(self):
         # Generate HTML for the widget
         html = ''
+        try: 
+            if hasattr(self, 'before') and self.before: 
+                try:
+                    html += self.before.rendered_html
+                except:
+                    try:
+                        html += self.before.__get_html()
+                    except:
+                        e = WidgetWarning("Unable to generate HTML for before widget")
+                        html += f'<div class="error">{e} - {self.before.name}</div>'
+                        
+                        
+                    
+        except AttributeError as e:
+            e = WidgetWarning(e)
+            self.log_warning(f"{e}" )
+            
         
-        if self.before: 
-            html += self.before.rendered_html
-        
-        
-        
-        additional_attributes = " ".join(f'{attr}="{val}"' for attr, val in self.other_attributes.items())
+        try: 
+            additional_attributes = " ".join(f'{attr}="{val}"' for attr, val in self.other_attributes.items())
+        except AttributeError as e:
+            additional_attributes = ""
+            
         if self.label:
             if self.label.inside_widget:             
                 opening_tag = f'<{self._html_tag} id="{self.id()}" class="{self.__get_classes()}" {additional_attributes}>' + self.label.html
@@ -167,6 +183,8 @@ class Widget:
                     else:
                         # If the child does not have rendered_html, call its __get_html method
                         child.rendered_html = child.__get_html()
+                        html += child.rendered_html
+                    
         
                 except AttributeError as e:
                     e = WidgetWarning(e)
