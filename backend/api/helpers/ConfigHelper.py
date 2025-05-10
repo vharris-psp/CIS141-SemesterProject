@@ -211,8 +211,8 @@ class ConfigHelper(Helper):
                     # Only Make these checks if the field already exists in the device config.  
                     if field in device_config:
                         if config[field] == device_config[field]:
-                            print(f"Field {field} is already set to the same value: {config[field]}")
-                            failed_updates[field] = 'Already set to the same value'
+                            
+                            pending_updates[field] = config[field]
                             continue
 
                         elif config[field] == '':

@@ -8,6 +8,9 @@ body{
     background-color: #f0f0f0;
     color: #333;
 }
+.static-label {
+    font-size: .7rem;
+}
 .settings-viewer {
     display: block;
     width: 82%;
@@ -124,11 +127,21 @@ body{
     border-color: #555454;
     outline: none;
     box-shadow: 0 0 5px rgba(85, 84, 84, 0.8);
+
 }
 .device-setting-container .config-input-container > .warning-label {
     color: #ff0000;
-    font-size: 0.8em;
-    margin-left: 0.5em;
+    width: fit-content;
 }
-
+.device-setting-container .config-input-container > .success-label {
+    color: #007c0a;
+    width: fit-content;
+}
+.device-setting-container .config-input-container > .warning-label .active, .device-setting-container .config-input-container > .success-label .active {
+    display: grid;
+}
+.config-input-container > .select-option-widget {
+    width: auto;
+    display: flex;
+}
 

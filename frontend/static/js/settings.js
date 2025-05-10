@@ -67,6 +67,15 @@ async function fetchDevices() {
       save_config(deviceName);
     });
   });
+  container.find('.select-input-widget[options]').each(function () {
+    const options = $(this).attr('options');
+    const select = $(this).find('select');
+    const selectOptions = JSON.parse(options);
+    for (let i = 0; i < selectOptions.length; i++) {
+      const option = selectOptions[i];
+      select.append(`<option value="${option}">${option}</option>`);
+    }
+  })
 
 
 
@@ -92,6 +101,9 @@ async function save_config(device_name) {
     const key = $(this).data('setting');
     
     inputs[key] = $(this).find('input');
+    if (inputs[key].length === 0) {
+      inputs[key] = $(this).find('select');
+    }
     warning_labels[key] = $(this).find('.warning-label');
     const currentValue = inputs[key].val();
     if (!deviceSettings[device_name]) {
@@ -114,8 +126,9 @@ async function save_config(device_name) {
       if (result.successful_changes.hasOwnProperty(key)) {
         const input = $(`[data-setting="${key}"]`).find('input');
         inputs[key].css('border-color', 'green');
-        warning_labels[key].text(result.successful_changes[key]);
-        warning_labels[key].css('color', 'green');
+        let label = warning_labels[key]
+        label.text(result.successful_changes[key]);
+        label.attr('class', 'success-label active');
       }
       
         
@@ -124,8 +137,10 @@ async function save_config(device_name) {
       if (result.failed_changes.hasOwnProperty(key)) {
       const input = $(`[data-setting="${key}"]`).find('input');
       inputs[key].css('border-color', 'red');
-      warning_labels[key].text(result.failed_changes[key]);
-      warning_labels[key].css('color', 'red');
+      let label = warning_labels[key]
+      label.text(result.failed_changes[key]);
+      label.attr('class', 'warning-label active');
+
       };
     }
       

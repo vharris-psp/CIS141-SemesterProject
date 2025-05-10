@@ -29,11 +29,20 @@ class SettingsPage(DefaultPage):
             '''
             input = None
             self.other_attributes = {'data-setting': setting}
-            
-            if field_dict.get('type') == 'text':
-                input = Input.Input(value=current_value, placeholder=field_dict.get('placeholder'), data={'data-setting': setting})
-            else:
-                input = Input.Input(value=current_value, placeholder='')
+            field_type = field_dict.get('type')
+            match field_type:
+                case 'text':
+                    input = Input.Input(value=current_value, placeholder=field_dict.get('placeholder'), data={'data-setting': setting})
+                case 'password':
+                    input = Input.PasswordInput(value=current_value, placeholder=field_dict.get('placeholder'), data={'data-setting': setting})
+                case 'number':
+                    input = Input.Input(value=current_value, placeholder=field_dict.get('placeholder'), data={'data-setting': setting})
+                case 'select':
+                    options = field_dict.get('options', [])
+                    input = Input.Select(value=current_value, placeholder=field_dict.get('placeholder'), data={'data-setting': setting, 'options': options})
+                    
+                case _:
+                    input = Input.Input(value=current_value, placeholder='')
             self.children =[Static.Label(label_text=field_dict['label'], label_for=input), input, Static.WarningLabel(label_text='')]
             super().__init__()
             
@@ -52,9 +61,9 @@ class SettingsPage(DefaultPage):
             # This duplicates label and causes problems TODO: FIX THIS
             #self.label = Static.Label(label_text=f'Configuration for: {device}', label_for=self)
             #TODO: Make the current values work
-            self.save_button = Wrapper(children=[Static.Label(label_text=f'{device}', label_for=self), SaveConfigButton(text='Save', data={'data-device': device})])
+            self.save_button =  SaveConfigButton(text='Save', data={'data-device': device})
             self.children = [SettingsPage.ConfigInputContainer(setting=setting, field_dict=value, current_value=fields[setting].get('value', '')) for setting, value in fields.items()]
-            self.children.insert(0, self.save_button)
+            self.children.append(self.save_button)
             super().__init__(data=fields)
     class DeviceTypeContainer(Accordion):
         css_class = "device-type-container"
@@ -63,7 +72,7 @@ class SettingsPage(DefaultPage):
             self.device_elements = device_elements
             # This duplicates label and causes problems TODO: FIX THIS
             # self.label = Static.Label(label_text=device_type, label_for=self)
-            super().__init__(label_text=f'Device Type: {device_type}', config_elements=device_elements)
+            super().__init__(label_text=f'Device Type: {device_type} ( {len(device_elements)} Devices)', config_elements=device_elements)
 
     class DeviceGroupContainer(Accordion):
         css_class = "device-group-container"
@@ -78,7 +87,7 @@ class SettingsPage(DefaultPage):
             self.device_elements = child_elements
             
             
-            super().__init__(label_text=f'Group: {group}', config_elements=child_elements)
+            super().__init__(label_text=f'Device Group: {group}', config_elements=child_elements)
     class DeviceSettingsContent(VerticalGroup):
         """Settings page content class for the web application."""
         inner_html = "Settings Viewer"
@@ -129,8 +138,8 @@ class SettingsPage(DefaultPage):
                 # Iterate through the devices and sort them into the correct group and type
                 for devices, config in device_list.items(): 
                     try:  
-                        device_group = config.get('group', 'default')
-                        device_type = config.get('type', 'default')
+                        device_group = config.get('groups', 'default')
+                        device_type = config.get('device_types', 'default')
                         if device_group not in device_groups or device_type not in device_types:
                             raise KeyError(f"Device group '{device_group}' or type '{device_type}' not found in configuration.")
                         try: 
@@ -160,7 +169,7 @@ class SettingsPage(DefaultPage):
                                 device_fields[device] = field_dict
                             #devices = {device: SettingsPage.DeviceSettingContainer(device=device, fields=device_fields) for device, config in devices.items()}
                         
-                        device_type_containers[device_type] = SettingsPage.DeviceTypeContainer(device_type=device_type, device_elements=devices)    
+                            device_type_containers[device_type] = SettingsPage.DeviceTypeContainer(device_type=device_type, device_elements=devices)    
                         
                             
                     except KeyError as e:
@@ -168,7 +177,7 @@ class SettingsPage(DefaultPage):
                     except Exception as e:
                         self.log_warning(e)
                 
-                yield [SettingsPage.DeviceGroupContainer(group=device_group, child_elements=device_type_containers)(), device_fields]
+                    yield [SettingsPage.DeviceGroupContainer(group=device_group, child_elements=device_type_containers)(), device_fields]
                 
 
 
