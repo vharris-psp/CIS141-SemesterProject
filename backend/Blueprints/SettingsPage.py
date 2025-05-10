@@ -90,13 +90,19 @@ class SettingsPage(DefaultPage):
             super().__init__(label_text=f'Device Group: {group}', config_elements=child_elements)
     class DeviceSettingsContent(VerticalGroup):
         """Settings page content class for the web application."""
-        inner_html = "Settings Viewer"
+        inner_html = "Settings"
         css_class = "settings-viewer content"
 
         def __init__(self):
             super().__init__()
 
-    
+    class DeviceClassContent(VerticalGroup):
+        """Settings page content class for the web application."""
+        inner_html = "Device Defaults"
+        css_class = "settings-viewer content"
+        
+        def __init__(self):
+            super().__init__()
 
                 
 
@@ -107,6 +113,7 @@ class SettingsPage(DefaultPage):
     def __init__(self):
         self.content = SettingsPage.DeviceSettingsContent()
         self.device_content = SettingsPage.DeviceSettingsContent()
+        self.device_class_content = SettingsPage.DeviceClassContent()
         super().__init__(name='settings')
         
         @self.route('/settings')
@@ -114,8 +121,10 @@ class SettingsPage(DefaultPage):
             return render_template('settings.html', header_buttons=SettingsPage.header_buttons, footer_buttons=SettingsPage.footer_buttons, content=self.content)
         @self.route('/settings/devices')
         def settings_devices():
-            return render_template('settings.html', header_buttons=SettingsPage.header_buttons, footer_buttons=SettingsPage.footer_buttons, content=self.content)
-        
+            return render_template('settings.html', header_buttons=SettingsPage.header_buttons, footer_buttons=SettingsPage.footer_buttons, content=self.device_content)
+        @self.route('/settings/device_defaults')
+        def settings_device_defaults():
+            return render_template('settings.html', header_buttons=SettingsPage.header_buttons, footer_buttons=SettingsPage.footer_buttons, content=self.device_class_content)
         @self.route('/settings/get_device_list', methods=['GET'])
         def get_device_list():
             def generate():
